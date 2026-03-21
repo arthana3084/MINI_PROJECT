@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">🌅 MindWatch</div>
+
+<div class="container">
+
+<!-- ANXIETY -->
+{% if category == "anxiety" %}
+<h2>We sense signs of anxiety 💛</h2>
+<p>Let’s understand this better. Please answer honestly.</p>
+
+{% set questions = [
+"I feel nervous, anxious, or on edge",
+"I find it difficult to control my worries",
+"I tend to overthink situations excessively",
+"I feel restless or unable to relax",
+"I experience sudden feelings of panic",
+"I worry about things beyond my control",
+"I feel tense or easily startled",
+"I struggle to concentrate due to worry",
+"I feel a sense of impending danger",
+"I have trouble sleeping due to overthinking"
+] %}
+
+<!-- DEPRESSION -->
+{% elif category == "depression" %}
+<h2>We sense signs of low mood 💛</h2>
+<p>Let’s gently explore how you’ve been feeling.</p>
+
+{% set questions = [
+"I feel down, depressed, or hopeless",
+"I have little interest or pleasure in activities",
+"I feel tired or lack energy",
+"I struggle with motivation",
+"I feel worthless or excessively guilty",
+"I find it difficult to concentrate",
+"I feel emotionally numb",
+"I withdraw from social interactions",
+"I feel like things won’t improve",
+"I struggle to manage daily routines"
+] %}
+
+<!-- GENERAL -->
+{% else %}
+<h2>A gentle check-in with yourself 💛</h2>
+<p>Answer these to help us understand your emotional well-being.</p>
+
+{% set questions = [
+"I feel calm and emotionally balanced",
+"I feel satisfied with my life",
+"I feel hopeful about my future",
+"I am able to manage stress effectively",
+"I feel connected to people around me",
+"I feel motivated to carry out daily tasks",
+"I enjoy activities I usually like",
+"I feel confident in myself",
+"I feel mentally stable and in control",
+"I feel a sense of purpose in life",
+
+"I feel nervous, anxious, or on edge",
+"I find it difficult to control my worries",
+"I overthink situations excessively",
+"I feel restless or unable to relax",
+"I experience sudden feelings of panic",
+"I worry about things beyond my control",
+"I feel tense or easily startled",
+"I struggle to concentrate due to worry",
+"I feel a sense of impending danger",
+"I have trouble sleeping due to overthinking",
+
+"I feel down, depressed, or hopeless",
+"I have little interest or pleasure in activities",
+"I feel tired or lack energy",
+"I struggle with motivation",
+"I feel worthless or excessively guilty",
+"I find it difficult to concentrate",
+"I feel emotionally numb",
+"I withdraw from social interactions",
+"I feel like things won’t improve",
+"I struggle to manage daily routines"
+] %}
+
+{% endif %}
+
+<form action="/predict" method="POST">
+<input type="hidden" name="text" value="{{ text }}">
+
+{% for i in range(questions|length) %}
+<div class="question-box">
+
+<p><b>Q{{i+1}}:</b> {{ questions[i] }}</p>
+
+<label><input type="radio" name="q{{i+1}}" value="0" required> Not at all</label><br>
+<label><input type="radio" name="q{{i+1}}" value="1"> Rarely</label><br>
+<label><input type="radio" name="q{{i+1}}" value="2"> Sometimes</label><br>
+<label><input type="radio" name="q{{i+1}}" value="3"> Often</label><br>
+<label><input type="radio" name="q{{i+1}}" value="4"> Almost always</label>
+
+</div>
+{% endfor %}
+
+<br>
+<button type="submit">Analyze</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="header">🌅 MindWatch</div>
+
+<div class="container">
+<h2>Tell us how you feel</h2>
+
+<form action="/checklist_text" method="POST">
+<textarea name="user_input" required></textarea><br><br>
+<button type="submit">Continue</button>
+</form>
+
+</div>
+
+</body>
+</html>
