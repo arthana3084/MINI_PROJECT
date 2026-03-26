@@ -1,19 +1,192 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta charset="UTF-8">
+<title>MindWatch</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #CDE4D3; /* 🌿 mint green */
+}
+
+.navbar {
+    width: 100%;
+    height: 70px;
+    background: #f2f4f3;  /* 👈 your color */
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    padding: 0 20px;
+    box-sizing: border-box;
+
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.split {
+    display: flex;
+    height: 100vh;
+}
+
+/* 🔹 MAIN LAYOUT */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* 🌊 LEFT SIDE */
+/* LEFT IMAGE */
+.left {
+    width: 50%;
+    position: relative;
+    overflow: hidden; /* 👈 IMPORTANT */
+    background: url("/static/bg.jpg") no-repeat center;
+    background-size: cover;
+}
+
+/* FADE ONLY LEFT */
+.left::after {
+    content: "";
+    position: absolute;
+    inset: 0; /* better than top/left/width/height */
+
+    background: rgba(205, 228, 211, 0.5);
+    pointer-events: none; /* 👈 prevents blocking clicks */
+}
+
+/* RIGHT SIDE */
+.right {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    width: 400px;
+    text-align: center;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+    margin-bottom: 20px;
+    color: #2f3e3a; 
+}
+
+/* TEXTAREA */
+textarea {
+    width: 100%;
+    height: 120px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    resize: none;
+}
+
+/* BUTTON */
+button {
+    margin-top: 20px;
+    padding: 12px 30px;
+    border-radius: 25px;
+    border: none;
+
+    background: linear-gradient(135deg, #7fbfa2, #4f8f74);
+    color: white;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background: #4f8f74;
+}
+
+
+/* HEADER */
+.navbar {
+    position: fixed;   /* 🔥 change this */
+    height: 70px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+    display: flex;
+    align-items: center;
+    padding: 12px 40px;
+
+    background: #f2f4f3;
+
+    z-index: 1000;   /* 🔥 important */
+}
+/* LOGO TEXT */
+.logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    display: block;   /* 👈 NOT flex */
+}
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.brand {
+    font-weight: 600;
+    font-size: 20px;
+    color: #1f4037;
+}
+
+/* LOGO IMAGE */
+.logo img {
+    height: 48px;   /* 🔥 reduced from 55px */
+    width: 48px;
+    object-fit: contain;
+}
+
+</style>
+
 </head>
+
 <body>
 
-<div class="header">🌅 MindWatch</div>
-
 <div class="container">
-<h2>Tell us how you feel</h2>
+    <header class="navbar">
+    <div class="nav-left">
+        <img src="/static/logo.png" class="logo">
+        <span class="brand">MindWatch</span>
+    </div>
+    </header>
 
-<form action="/checklist_text" method="POST">
-<textarea name="user_input" required></textarea><br><br>
-<button type="submit">Continue</button>
-</form>
+    <!-- 🌊 LEFT SIDE -->
+    <div class="left">
+        <div class="left-content">
+            
+        </div>
+    </div>
+
+    <!-- 📝 RIGHT SIDE -->
+    <div class="right">
+        <div class="card">
+            <h2>Tell us how you feel</h2>
+
+            <textarea placeholder="How are you feeling right now?"></textarea>
+
+            <button type="button" onclick="window.location.href='/checklist_general'">
+    Continue
+</button>
+        </div>
+    </div>
 
 </div>
 

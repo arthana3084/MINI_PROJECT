@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MindWatch</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+
+/* 🌿 BODY BACKGROUND (YOUR COLOR COMBO) */
+
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #CDE4D3;  /* 🌿 mint green */
+    color: #2f3e3a;
+}
+/* CENTER CONTENT */
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 🌟 MINDWATCH TITLE */
+#typing-text {
+    font-family: 'Playfair Display', serif;  /* 👈 premium font */
+    font-size: 100px;
+    font-weight: 700;
+    letter-spacing: 6px;
+
+    color: #F3F1E9;
+
+    text-shadow: 0px 6px 20px rgba(0,0,0,0.2);
+}
+
+/* ✨ DESCRIPTION */
+#description {
+    margin-top: 30px;
+
+    font-family: 'Poppins', sans-serif;   /* 👈 ADD THIS */
+    font-size: 28px;                      /* slightly refined */
+    font-weight: 400;                     /* 👈 ADD THIS */
+
+    color: #1f5c4d;
+
+    line-height: 1.6;                     /* 👈 ADD THIS */
+    letter-spacing: 0.5px;                /* 👈 ADD THIS */
+
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    text-align: center;
+}
+
+/* 📦 FEATURES SECTION */
+.features {
+    display: flex;
+    gap: 40px;
+    margin-top: 60px;
+    margin-bottom: 60px;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+
+/* 🧩 CARD */
+.card {
+    background: #F3F1E9;
+    padding: 20px;
+    width: 220px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: 0.3s;
+    text-align: center;   /* center everything */
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+/* ICON */
+.card img {
+    width: 120px;          /* bigger image */
+    height: 120px;
+    object-fit: contain;
+
+    display: block;
+    margin: 0 auto 20px;   /* center image */
+}
+
+/* CARD TEXT */
+.card h3 {
+    font-size: 20px;
+    color: #1f5c4d;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 14px;
+    color: #555;
+}
+
+/* 🚀 BUTTON */
+.start-btn {
+    display: block;                 /* 👈 IMPORTANT (for centering) */
+    margin: 70px auto 40px;         /* 👈 top | left-right(auto) | bottom */
+
+    padding: 14px 35px;
+    border-radius: 25px;
+    border: none;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    background: linear-gradient(135deg, #7fbfa2, #4f8f74);
+    color: white;
+
+    cursor: pointer;
+
+    opacity: 0;
+    transition: opacity 1.5s ease, transform 0.3s;
+}
+
+.start-btn:hover {
+    transform: scale(1.05);
+    background: #4f8f74;
+}
+/* HERO FULL SCREEN */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* FEATURES SECTION */
+.features-section {
+    padding: 80px 20px;
+    background: #F3F1E9;
+}
+
+/* ENABLE SCROLL ANIMATION */
+.features {
+    display: flex;
+    gap: 30px;
+    margin-top: 60px;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    opacity: 0;
+    transform: translateY(40px);
+    transition: 1s;
+}
+
+/* CENTER BUTTON */
+.start-btn {
+    display: block;
+    margin: 40px auto;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+
+
+<!-- ✍️ TYPING TEXT -->
+<div class="hero">
+
+    <h1 id="typing-text"></h1>
+
+    <h1 id="description">
+    
+    You’re not alone <br>
+    we’re here to help you understand yourself
+
+    </h1>
+
+</div>
+
+<!-- 📦 FEATURES SECTION -->
+<div class="features-section">
+
+    <!-- 📦 FEATURES -->
+    <div class="features" id="features">
+
+        <div class="card">
+            <img src="/static/icon1.jpeg">
+            <h3>Guidance you can trust</h3>
+            <p>Find reliable mental health information.</p>
+        </div>
+
+        <div class="card">
+            <img src="/static/icon2.jpeg">
+            <h3>Understand your feelings</h3>
+            <p>Manage emotions and build strong habits.</p>
+        </div>
+
+        <div class="card">
+            <img src="/static/icon3.jpeg">
+            <h3>Strategies to feel better</h3>
+            <p>Improve your mental well-being daily.</p>
+        </div>
+
+        <div class="card">
+            <img src="/static/icon4.jpeg">
+            <h3>Support you can rely on</h3>
+            <p>We're here whenever you need help.</p>
+        </div>
+
+    </div>
+
+    <!-- 🚀 BUTTON (move it here too) -->
+    <button class="start-btn" id="startBtn" onclick="window.location.href='/landing'">
+        Continue
+    </button>
+
+</div>
+
+
+
+
+
+
+<script>
+
+/* ✍️ TYPEWRITER EFFECT */
+const text = "MINDWATCH";
+let index = 0;
+
+function typeEffect() {
+    if (index < text.length) {
+        document.getElementById("typing-text").innerHTML += text.charAt(index);
+        index++;
+        setTimeout(typeEffect, 150); // slower typing
+    } else {
+        showContent();
+    }
+}
+
+/* 🎬 SHOW CONTENT STEP BY STEP */
+function showContent() {
+    document.getElementById("description").style.opacity = "1";
+
+    setTimeout(() => {
+        document.getElementById("features").style.opacity = "1";
+    }, 800);
+
+    setTimeout(() => {
+        document.getElementById("startBtn").style.opacity = "1";
+    }, 1600);
+}
+
+/* START */
+typeEffect();
+
+window.addEventListener("scroll", function () {
+    let features = document.getElementById("features");
+    let position = features.getBoundingClientRect().top;
+    let screenHeight = window.innerHeight;
+
+    if (position < screenHeight - 100) {
+        features.classList.add("show");
+    }
+});
+
+</script>
+
+</body>
+</html>
