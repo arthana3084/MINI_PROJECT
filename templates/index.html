@@ -1,41 +1,266 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>MindWatch 💛</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>MindWatch 💛</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;  
+        }
+
+        /* NAVBAR (REDUCED HEIGHT) */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            
+            display: flex;
+            align-items: center;
+            padding: 12px 40px;
+
+            background: #f2f4f3;
+
+            z-index: 1000;
+        }
+
+        /* LOGO TEXT */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 20px;
+            color: #1f4037;
+        }
+
+        /* LOGO IMAGE */
+        .logo img {
+            height: 48px;
+            width: 48px;
+            object-fit: contain;
+        }
+
+        /* HERO FULL SCREEN */
+        .hero {
+            height: 100vh;
+            display: flex;
+            margin-top: 70px;
+        }
+
+        .left {
+            flex: 1;
+            background: #F3F1E9;
+
+            display: flex;
+            align-items: center;
+
+            padding-left: 100px;
+        }
+
+        .main-quote {
+            font-size: 28px;
+            font-weight: 500;
+            color: #2f5d50;
+            line-height: 1.5;
+            margin-bottom: 4px;
+            max-width: 700px;
+        }
+
+        .author {
+            margin-top: 0;
+            font-size: 14px;
+            font-weight: 400;
+            color: #2f5d50;
+            opacity: 0.7;
+        }
+
+        .quote-box {
+            max-width: 650px;
+            width: 100%;
+        }
+
+        /* REMOVE BLUE AUTOFILL COLOR */
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 1000px #f9f9f9 inset !important;
+            -webkit-text-fill-color: #2f5d50 !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* ALSO FOR HOVER + FOCUS */
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px #f9f9f9 inset !important;
+            -webkit-text-fill-color: #2f5d50 !important;
+        }
+
+        /* RIGHT SIDE */
+        .right {
+            flex: 1;
+            background: #CDE4D3;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            height: 100%;
+        }
+
+        /* FORM CARD */
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 18px;
+            width: 320px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .form-card input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background: #f9f9f9;
+        }
+
+        .form-card input {
+            color: #2f5d50;
+        }
+
+        .form-card input {
+            color: #2f5d50;
+        }
+
+        .form-card input:focus {
+            outline: none;
+            border-color: #9fcbb3;
+            box-shadow: 0 0 6px rgba(150,200,180,0.4);
+        }
+
+        .form-card button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+
+            border: none;
+            border-radius: 30px;
+
+            background: #9fcbb3;
+            color: #1f4037;
+
+            font-weight: 600;
+            font-size: 15px;
+
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-card {
+            text-align: center;
+        }
+
+        .form-card button:hover {
+            transform: scale(1.05);
+            background: #88bfa5;
+        }
+
+        /* POP-UP ANIMATION */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeRight {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeLeft {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* APPLY ANIMATION */
+        .left {
+            animation: fadeRight 1s ease forwards;
+        }
+
+        .form-card {
+            animation: fadeLeft 1s ease forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="hero">
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo">
+            MindWatch
+        </div>
+    </div>
 
-<div class="hero-content">
+    <!-- HERO -->
+    <div class="hero">
 
-<h1>Hey… we’re here for you 🌅</h1>
+        <div class="left">
+            <div class="quote-box">
+                <p class="main-quote">
+                    "You don’t have to control your thoughts.<br>
+                    You just have to stop letting them control you."
+                </p>
+                <p class="author">— Dan Millman</p>
+            </div>
+        </div>
 
-<p>
-Take a deep breath.  
-You don’t have to figure everything out alone.  
-We’ll gently walk with you through what you’re feeling 💛
-</p>
+        <!-- RIGHT -->
+        <div class="right">
+            <div class="form-card">
+                <form action="/text" method="POST">
 
-<!-- USER INFO FORM -->
-<form action="/text" method="POST">
+                    <input type="text" name="name" placeholder="Your Name" required>
 
-<input type="text" name="name" placeholder="Your Name" required><br><br>
-<input type="number" name="age" placeholder="Age" min="1" max="100" required>
-<input type="email" name="email" placeholder="Email" required><br><br>
-<input type="text" name="place" placeholder="Place" required><br><br>
+                    <input type="email" name="email" placeholder="Email Address" required>
 
+                    <input type="number" name="age" placeholder="Age" required>
 
-<div class="buttons">
-<button type="submit" class="btn">Continue</button>
-</div>
+                    <input type="text" name="place" placeholder="Your Place" required>
 
-</form>
+                    <button type="submit">Start Your Journey</button>
 
-</div>
+                </form>
+            </div>
+        </div>
 
-</div>
+    </div>
 
 </body>
 </html>
