@@ -1,224 +1,194 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-<title>Your Result 💛</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <head>
+    <title>Your Result 💛</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
 
-<style>
+    <style>
+      .result-card {
+        background: #fff7f0;
+        padding: 25px;
+        border-radius: 15px;
+        margin-top: 20px;
+      }
 
-.result-card {
-    background: #fff7f0;
-    padding: 25px;
-    border-radius: 15px;
-    margin-top: 20px;
-}
+      .bar-container {
+        margin: 20px 0;
+      }
 
-.bar-container {
-    margin: 20px 0;
-}
+      .bar-label {
+        text-align: left;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
 
-.bar-label {
-    text-align: left;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
+      .bar-bg {
+        background: #f1f1f1;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 15px;
+      }
 
-.bar-bg {
-    background: #f1f1f1;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 15px;
-}
+      .bar-fill {
+        height: 25px;
+        line-height: 25px;
+        color: white;
+        padding-right: 10px;
+        text-align: right;
+        border-radius: 10px;
+        min-width: 35px;
+      }
 
-.bar-fill {
-    height: 25px;
-    line-height: 25px;
-    color: white;
-    padding-right: 10px;
-    text-align: right;
-    border-radius: 10px;
-}
+      .dep {
+        background: #ff6b6b;
+      }
+      .anx {
+        background: #ffa94d;
+      }
+      .norm {
+        background: #69db7c;
+      }
 
-.dep { background: #ff6b6b; }
-.anx { background: #ffa94d; }
-.norm { background: #69db7c; }
+      .section {
+        margin-top: 30px;
+        text-align: left;
+      }
 
-.section {
-    margin-top: 30px;
-    text-align: left;
-}
+      .resource {
+        background: #fff7f0;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 10px;
+      }
 
-.resource {
-    background: #fff7f0;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 10px;
-}
+      .resource a {
+        font-weight: bold;
+        color: #d9480f;
+        text-decoration: none;
+      }
 
-.resource a {
-    font-weight: bold;
-    color: #d9480f;
-    text-decoration: none;
-}
+      .intro {
+        color: #6b4f4f;
+      }
 
-.intro {
-    color: #6b4f4f;
-}
+      .message {
+        margin-top: 15px;
+        color: #5a3e36;
+      }
 
-.message {
-    margin-top: 15px;
-    color: #5a3e36;
-}
+      .closing {
+        margin-top: 20px;
+        font-style: italic;
+      }
 
-.closing {
-    margin-top: 20px;
-    font-style: italic;
-}
+      .disclaimer {
+        margin-top: 15px;
+        font-size: 13px;
+        color: #888;
+      }
 
-.disclaimer {
-    margin-top: 15px;
-    font-size: 13px;
-    color: #888;
-}
+      .result-title {
+        margin-top: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #5a3e36;
+      }
 
-</style>
+      .message {
+        margin-top: 10px;
+        font-size: 15px;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
 
-</head>
-<body>
+  <body>
+    <div class="container">
+      <h2>💛 You’re not alone</h2>
 
-<div class="container">
+      <p class="intro">
+        Taking a moment to understand how you feel is not easy — and the fact
+        that you're here shows strength.
+      </p>
 
-<h2>💛 You’re not alone</h2>
+      <div class="result-card">
+        <!-- GRAPH -->
+        <div class="bar-container">
+          <div class="bar-label">Depression</div>
+          <div class="bar-bg">
+            <div class="bar-fill dep" style="width: {{ dep_ui }}%">
+              {{ depression }}%
+            </div>
+          </div>
 
-<p class="intro">
-Taking a moment to understand how you feel is not easy —  
-and the fact that you're here shows strength.
-</p>
+          <div class="bar-label">Anxiety</div>
+          <div class="bar-bg">
+            <div class="bar-fill anx" style="width: {{ anx_ui }}%">
+              {{ anxiety }}%
+            </div>
+          </div>
 
-<div class="result-card">
+          <div class="bar-label">Normal</div>
+          <div class="bar-bg">
+            <div class="bar-fill norm" style="width: {{ norm_ui }}%">
+              {{ normal }}%
+            </div>
+          </div>
+        </div>
 
-<!-- GRAPH -->
-<div class="bar-container">
+        <!-- RESULT (IMPORTANT: ABOVE MESSAGE) -->
+        <h2 class="result-title">{{ final }}</h2>
 
-<div class="bar-label">Depression</div>
-<div class="bar-bg">
-    <div class="bar-fill dep" style="width: {{ depression }}%">
-        {{ depression }}%
+        <!-- MESSAGE -->
+        <p class="message">{{ message }}</p>
+      </div>
+
+      <!-- RISK -->
+      <div class="section" style="text-align: center">
+        <h3>Risk Level</h3>
+        <p style="font-weight: bold; font-size: 18px">{{ risk }}</p>
+      </div>
+
+      <!-- DOWNLOAD -->
+      <a href="/download">
+        <button>Download Report</button>
+      </a>
+
+      <!-- SUPPORT -->
+      <div class="section support-section">
+        <h2 class="support-title">🌐 {{ support_title }}</h2>
+
+        <div class="support-card">
+          {% for s in support %}
+          <div class="resource">
+            <h4>{{ s.name }}</h4>
+            <p class="support-desc">{{ s.desc }}</p>
+            <a href="{{ s.link }}" target="_blank">Visit →</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- CLOSING -->
+      <div class="section">
+        <p class="closing">
+          You don’t have to go through everything on your own. Reaching out is a
+          sign of strength, not weakness.
+        </p>
+
+        <p class="disclaimer">
+          ⚠️ This tool is not a medical diagnosis. It is meant to help you
+          reflect on your emotional state. For proper care, please consult a
+          qualified mental health professional.
+        </p>
+      </div>
+
+      <br />
+
+      <a href="/"><button>Go Back</button></a>
     </div>
-</div>
-
-<div class="bar-label">Anxiety</div>
-<div class="bar-bg">
-    <div class="bar-fill anx" style="width: {{ anxiety }}%">
-        {{ anxiety }}%
-    </div>
-</div>
-
-<div class="bar-label">Well-being</div>
-<div class="bar-bg">
-    <div class="bar-fill norm" style="width: {{ normal }}%">
-        {{ normal }}%
-    </div>
-</div>
-
-</div>
-
-<h3 style="margin-top:15px;">Your current state leans towards: {{ final }}</h3>
-
-</div>
-
-<!-- MESSAGE -->
-<div class="section">
-
-<p class="message">
-Whatever you're feeling right now is valid.  
-You are not defined by this moment — it’s something you’re going through.  
-And you deserve care, understanding, and support 💛
-</p>
-
-<p>
-Understanding yourself is the first step —  
-and you’ve already taken it.
-</p>
-
-</div>
-
-<!-- SUPPORT -->
-<div class="section">
-
-<h3>🌐 Support that truly cares</h3>
-
-<div class="support-card">
-
-<div class="resource">
-<a href="https://oppam.me">Oppam</a>
-<p>A safe space offering emotional support and guidance, especially for students and young individuals.</p>
-</div>
-
-<div class="resource">
-<a href="https://psychicare.com">PsychiCare</a>
-<p>Provides access to professional psychologists and structured mental health support.</p>
-</div>
-
-<div class="resource">
-<a href="https://mindpeers.co">MindPeers</a>
-<p>A modern platform focused on therapy, self-care, and emotional well-being.</p>
-</div>
-
-<div class="resource">
-<a href="https://www.betterlyf.com">BetterLYF</a>
-<p>Offers online counselling services tailored to personal emotional needs.</p>
-</div>
-
-<div class="resource">
-<a href="https://yourdost.com">YourDost</a>
-<p>An anonymous platform where you can talk freely to trained listeners and professionals.</p>
-</div>
-
-<div class="resource">
-<a href="https://www.aasra.info">AASRA</a>
-<p>A 24/7 helpline providing emotional crisis support.</p>
-</div>
-
-<div class="resource">
-<a href="https://icallhelpline.org">iCALL</a>
-<p>Provides free emotional support and counselling services.</p>
-</div>
-
-<div class="resource">
-<p><b>Kiran Helpline:</b> 1800-599-0019</p>
-<p>National mental health helpline by the Government of India.</p>
-</div>
-
-<div class="resource">
-<p><b>Vandrevala Foundation:</b> 9999 666 555</p>
-<p>Offers free mental health support with trained professionals.</p>
-</div>
-
-</div>
-
-</div>
-<!-- CLOSING -->
-<div class="section">
-
-<p class="closing">
-You don’t have to go through everything on your own.  
-Reaching out is a sign of strength, not weakness.
-</p>
-
-<p class="disclaimer">
-⚠️ This tool is not a medical diagnosis.  
-It is meant to help you reflect on your emotional state.  
-For proper care, please consult a qualified mental health professional.
-</p>
-
-</div>
-
-<br>
-
-<a href="/"><button>Go Back</button></a>
-
-</div>
-
-</body>
+  </body>
 </html>

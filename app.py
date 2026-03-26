@@ -1,157 +1,476 @@
-from flask import Flask, render_template, request
+QUESTIONS = [
+"I feel calm and emotionally balanced",
+"I feel satisfied with my life",
+"I feel hopeful about my future",
+"I am able to manage stress effectively",
+"I feel connected to people around me",
+"I feel motivated to carry out daily tasks",
+"I enjoy activities I usually like",
+"I feel confident in myself",
+"I feel mentally stable and in control",
+"I feel a sense of purpose in life",
+
+"I feel nervous, anxious, or on edge",
+"I find it difficult to control my worries",
+"I overthink situations excessively",
+"I feel restless or unable to relax",
+"I experience sudden feelings of panic",
+"I worry about things beyond my control",
+"I feel tense or easily startled",
+"I struggle to concentrate due to worry",
+"I feel a sense of impending danger",
+"I have trouble sleeping due to overthinking",
+
+"I feel down, depressed, or hopeless",
+"I have little interest or pleasure in activities",
+"I feel tired or lack energy",
+"I struggle with motivation",
+"I feel worthless or excessively guilty",
+"I find it difficult to concentrate",
+"I feel emotionally numb",
+"I withdraw from social interactions",
+"I feel like things won’t improve",
+"I struggle to manage daily routines"
+]
+import os
+from flask import Flask, render_template, request, send_file, session
 import pickle
 import re
+import tempfile
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 
+REPORT_FOLDER = "reports"
+os.makedirs(REPORT_FOLDER, exist_ok=True)
 app = Flask(__name__)
+app.secret_key = "mental_health_secure_key"
 
-# Load ML model
-model = pickle.load(open("model.pkl", "rb"))
-vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
+# ---------- SAFE MODEL LOAD ----------
+try:
+    model = pickle.load(open("model.pkl", "rb"))
+    vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
+except Exception as e:
+    print("Model load failed:", e)
+    model = None
+    vectorizer = None
 
-# ---------------- PREPROCESS ----------------
+
+# ---------- PREPROCESS ----------
 def preprocess(text):
     text = text.lower()
     text = re.sub(r'[^a-zA-Z\s]', '', text)
     return text
 
-# ---------------- CATEGORY DETECTION ----------------
-def detect_category(text):
-    text = text.lower()
 
-    if any(w in text for w in ["anxious", "panic", "worried", "stress", "nervous"]):
-        return "anxiety"
-    elif any(w in text for w in ["sad", "depressed", "hopeless", "low", "tired"]):
-        return "depression"
-    else:
-        return "general"
-
-# ---------------- ROUTES ----------------
+# ---------- ROUTES ----------
 @app.route("/")
 def home():
     return render_template("index.html")
 
-@app.route("/text")
+
+@app.route("/text", methods=["POST"])
 def text():
+    session['user_info'] = {
+        "name": request.form.get("name"),
+        "age": request.form.get("age"),
+        "email": request.form.get("email"),
+        "place": request.form.get("place")
+    }
+    return render_template("choice.html")
+
+
+@app.route("/text_input")
+def text_input():
     return render_template("text.html")
 
-@app.route("/checklist_text", methods=["POST"])
-def checklist_text():
-    text = request.form.get("user_input", "")
-    category = detect_category(text)
-    return render_template("checklist.html", text=text, category=category)
 
 @app.route("/checklist_general")
 def checklist_general():
     return render_template("checklist.html", text="", category="general")
 
-# ---------------- PREDICTION ----------------
+
+@app.route("/checklist_text", methods=["POST"])
+def checklist_text():
+    text = request.form.get("user_input", "")
+    return render_template("checklist.html", text=text, category="general")
+
+
+# ---------- PREDICT ----------
 @app.route("/predict", methods=["POST"])
 def predict():
 
     text = request.form.get("text", "")
-    category = detect_category(text)
 
-    # -------- ML Prediction --------
-    processed = preprocess(text)
-    vector = vectorizer.transform([processed])
-    probs = model.predict_proba(vector)[0]
+    # ---------- ML ----------
+    ml_dep = ml_anx = ml_norm = 0
 
-    depression = probs[0] * 100
-    anxiety = probs[1] * 100
-    normal = probs[2] * 100
+    if model and vectorizer and text.strip():
+        processed = preprocess(text)
+        vector = vectorizer.transform([processed])
+        probs = model.predict_proba(vector)[0]
+        labels = model.classes_
+        scores = dict(zip(labels, probs))
 
-    # -------- CHECKLIST SCORING --------
+        ml_dep = scores.get("depression", 0) * 100
+        ml_anx = scores.get("anxiety", 0) * 100
+        ml_norm = scores.get("normal", 0) * 100
+
+
+    # ---------- CHECKLIST ----------
     dep_score = 0
     anx_score = 0
     pos_score = 0
+    responses = {}
 
-    total_questions = len(request.form) - 1  # excluding text field
+    options = ["Not at all", "Rarely", "Sometimes", "Often", "Almost always"]
 
-    for i in range(1, total_questions + 1):
+    for i in range(1, 31):
+        raw_val = request.form.get(f"q{i}")
+        if raw_val is None:
+            continue  # skip unanswered question
         val = int(request.form.get(f"q{i}", 0))
+        responses[f"Question {i}"] = options[val]
 
-        weight = 2 if val >= 3 else 1
+        if 1 <= i <= 10:
+            pos_score += val
+        elif 11 <= i <= 20:
+            anx_score += val
+        elif 21 <= i <= 30:
+            dep_score += val
 
-        if category == "depression":
-            dep_score += val * weight
 
-        elif category == "anxiety":
-            anx_score += val * weight
+    # ---------- NORMALIZATION ----------
+    max_section = 10 * 4
 
-        else:
-            # general mix
-            if i <= total_questions * 0.33:
-                pos_score += val * weight
-            elif i <= total_questions * 0.66:
-                anx_score += val * weight
-            else:
-                dep_score += val * weight
+    c_dep = (dep_score / max_section) * 100
+    c_anx = (anx_score / max_section) * 100
+    c_norm = (pos_score / max_section) * 100
 
-    # -------- HARD FIX (IMPORTANT) --------
-    total_input_score = dep_score + anx_score + pos_score
 
-    if total_input_score == 0:
-        return render_template(
-            "result.html",
-            depression=0,
-            anxiety=0,
-            normal=100,
-            final="Normal"
-        )
+    # ---------- COMBINE ----------
+    f_dep = (0.6 * ml_dep) + (0.4 * c_dep)
+    f_anx = (0.6 * ml_anx) + (0.4 * c_anx)
+    f_norm = (0.6 * ml_norm) + (0.4 * c_norm)
 
-    # -------- NORMALIZE CHECKLIST --------
-    max_score = total_questions * 4 * 2
+    total = f_dep + f_anx + f_norm or 1
 
-    if max_score == 0:
-        max_score = 1
+    depression = round((f_dep / total) * 100, 2)
+    anxiety = round((f_anx / total) * 100, 2)
+    normal = round((f_norm / total) * 100, 2)
 
-    dep_score = (dep_score / max_score) * 100
-    anx_score = (anx_score / max_score) * 100
-    pos_score = (pos_score / max_score) * 100
 
-    # -------- COMBINE ML + CHECKLIST --------
-    depression = 0.3 * depression + 0.7 * dep_score
-    anxiety = 0.3 * anxiety + 0.7 * anx_score
-    normal = 0.3 * normal + 0.7 * pos_score
-
-    # -------- DOMINANCE CONTROL --------
-    if dep_score > anx_score and dep_score > pos_score:
-        anxiety *= 0.6
-        normal *= 0.6
-
-    elif anx_score > dep_score and anx_score > pos_score:
-        depression *= 0.6
-        normal *= 0.6
-
-    elif pos_score > dep_score and pos_score > anx_score:
-        depression *= 0.6
-        anxiety *= 0.6
-
-    # -------- FINAL NORMALIZATION --------
-    total = depression + anxiety + normal
-    if total == 0:
-        total = 1
-
-    depression = round((depression / total) * 100, 2)
-    anxiety = round((anxiety / total) * 100, 2)
-    normal = round((normal / total) * 100, 2)
-
-    # -------- FINAL LABEL --------
-    if depression > anxiety and depression > normal:
-        final = "Depression"
-    elif anxiety > depression and anxiety > normal:
-        final = "Anxiety"
+    # ---------- FINAL DECISION ----------
+    if f_dep == 0 and f_anx == 0 and f_norm == 0:
+        final = "Confused and Uncertain"
     else:
-        final = "Normal"
+        scores = {
+            "Depression": f_dep,
+            "Anxiety": f_anx,
+            "Normal": f_norm
+        }
+
+        sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        top1, top2 = sorted_scores[0], sorted_scores[1]
+
+        if abs(top1[1] - top2[1]) < 8:
+            combo = sorted([top1[0], top2[0]])
+            final = f"{combo[0]} & {combo[1]}"
+        else:
+            final = top1[0]
+
+
+    # ---------- LABEL SET ----------
+    if final == "Confused and Uncertain":
+        labels = {"Confused"}
+    else:
+        labels = set(final.split(" & "))
+
+
+    # ---------- MESSAGE ----------
+    if labels == {"Depression"}:
+        message = "Your responses suggest signs of DEPRESSION. It may help to talk to someone you trust or seek professional support."
+
+    elif labels == {"Anxiety"}:
+        message = "Your responses indicate elevated ANXIETY levels. Practicing relaxation techniques and reaching out for support could help."
+
+    elif labels == {"Normal"}:
+        message = "Your responses suggest a generally balanced emotional state. Continue maintaining your well-being."
+
+    elif labels == {"Depression", "Anxiety"}:
+        message = "Your responses indicate both ANXIETY and DEPRESSION symptoms. It is important to seek support and not handle this alone."
+
+    elif labels == {"Depression", "Normal"}:
+        message = "MILD DEPRESSION detected. Early attention can help improve your well-being."
+
+    elif labels == {"Anxiety", "Normal"}:
+        message = "MILD ANXIETY detected. You are managing well, but small steps can help reduce stress."
+
+    elif labels == {"Confused"}:
+        message = "Your responses do not clearly indicate a specific pattern. Consider reflecting more or seeking professional guidance."
+
+    else:
+        message = "Your responses show mixed emotional patterns. Paying attention to your mental health is important."
+
+
+    # ---------- RISK ----------
+    severity = max(f_dep, f_anx)
+
+    if "Depression" in final and "Anxiety" in final:
+        severity += 10
+
+    if severity >= 65:
+        risk = "High Risk"
+    elif severity >= 35:
+        risk = "Moderate Risk"
+    else:
+        risk = "Low Risk"
+
+
+    # ---------- SUPPORT ----------
+    support_db = {
+        "Depression": [
+            {
+                "name": "AASRA",
+                "link": "https://www.aasra.info",
+                "desc": "24/7 emotional support helpline for individuals experiencing distress or depression."
+            }
+        ],
+
+        "Anxiety": [
+            {
+                "name": "MindPeers",
+                "link": "https://mindpeers.co",
+                "desc": "Professional therapy and tools to manage anxiety and stress effectively."
+            }
+        ],
+
+        "Normal": [
+            {
+                "name": "Oppam",
+                "link": "https://oppam.me",
+                "desc": "A platform to maintain emotional well-being and stay mentally balanced."
+            }
+        ],
+
+        "Depression & Anxiety": [
+            {
+                "name": "AASRA",
+                "link": "https://www.aasra.info",
+                "desc": "24/7 support for emotional distress, depression and crisis situations."
+            },
+            {
+                "name": "MindPeers",
+                "link": "https://mindpeers.co",
+                "desc": "Guided therapy and mental health tools for anxiety and depression."
+            }
+        ],
+
+        "Depression & Normal": [
+            {
+                "name": "iCALL",
+                "link": "https://icallhelpline.org",
+                "desc": "Professional counselling service for early signs of emotional distress."
+            }
+        ],
+
+        "Anxiety & Normal": [
+            {
+                "name": "BetterLYF",
+                "link": "https://betterlyf.com",
+                "desc": "Online counselling and stress management support."
+            }
+        ],
+
+        "Confused and Uncertain": [
+            {
+                "name": "iCALL",
+                "link": "https://icallhelpline.org",
+                "desc": "Talk to professionals to better understand your emotional state."
+            },
+            {
+                "name": "AASRA",
+                "link": "https://www.aasra.info",
+                "desc": "Immediate emotional support when you're unsure about your feelings."
+            }
+        ]
+    }
+
+    support = support_db.get(final, [])
+
+
+    # ---------- SUPPORT TITLE ----------
+    if "Depression" in final and "Anxiety" in final:
+        support_title = "Support for anxiety & depression"
+    elif "Depression" in final:
+        support_title = "Support for depression"
+    elif "Anxiety" in final:
+        support_title = "Support for anxiety"
+    elif final == "Normal":
+        support_title = "Resources to maintain well-being"
+    elif final == "Confused and Uncertain":
+        support_title = "General mental health support"
+    else:
+        support_title = "Support resources"
+
+
+    # ---------- STORE ----------
+    session['latest_result'] = {
+        "text": text,
+        "final": final,
+        "depression": depression,
+        "anxiety": anxiety,
+        "normal": normal,
+        "risk": risk,
+        "responses": responses
+    }
+
+
+    # ---------- UI WIDTH ----------
+    dep_ui = depression if depression > 2 else 2
+    anx_ui = anxiety if anxiety > 2 else 2
+    norm_ui = normal if normal > 2 else 2
+
 
     return render_template(
         "result.html",
         depression=depression,
         anxiety=anxiety,
         normal=normal,
-        final=final
+        dep_ui=dep_ui,
+        anx_ui=anx_ui,
+        norm_ui=norm_ui,
+        final=final,
+        risk=risk,
+        support=support,
+        support_title=support_title,
+        message=message
     )
 
-# ---------------- RUN ----------------
+
+# ---------- DOWNLOAD ----------
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+import os
+
+
+@app.route("/download")
+def download():
+
+    res = session.get('latest_result')
+    user = session.get('user_info', {})
+
+    if not res:
+        return "No report available"
+
+    REPORT_FOLDER = "reports"
+    os.makedirs(REPORT_FOLDER, exist_ok=True)
+
+    name = user.get('name', 'report').replace(" ", "_")
+    file_path = os.path.join(REPORT_FOLDER, f"{name}.pdf")
+
+    doc = SimpleDocTemplate(file_path)
+    styles = getSampleStyleSheet()
+
+    content = []
+
+    # ---------- TITLE ----------
+    content.append(Paragraph("<b>MindWatch Mental Health Report</b>", styles["Title"]))
+    content.append(Spacer(1, 20))
+
+    # ---------- USER DETAILS TABLE ----------
+    user_data = [
+        ["Name", user.get('name')],
+        ["Age", user.get('age')],
+        ["Place", user.get('place')],
+        ["Email", user.get('email')],
+    ]
+
+    table = Table(user_data, colWidths=[120, 300])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.beige),
+        ('GRID', (0,0), (-1,-1), 0.5, colors.grey)
+    ]))
+
+    content.append(Paragraph("<b>User Details</b>", styles["Heading2"]))
+    content.append(Spacer(1, 10))
+    content.append(table)
+    content.append(Spacer(1, 20))
+
+    # ---------- RESULT ----------
+    content.append(Paragraph("<b>Assessment Result</b>", styles["Heading2"]))
+    content.append(Spacer(1, 10))
+
+    content.append(Paragraph(f"<b>Final State:</b> {res['final']}", styles["Normal"]))
+    content.append(Paragraph(f"<b>Risk Level:</b> {res['risk']}", styles["Normal"]))
+    content.append(Spacer(1, 10))
+
+    # ---------- SCORES TABLE ----------
+    score_data = [
+        ["Metric", "Percentage"],
+        ["Depression", f"{res['depression']}%"],
+        ["Anxiety", f"{res['anxiety']}%"],
+        ["Normal", f"{res['normal']}%"]
+    ]
+
+    score_table = Table(score_data, colWidths=[200, 200])
+    score_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+        ('GRID', (0,0), (-1,-1), 0.5, colors.black)
+    ]))
+
+    content.append(score_table)
+    content.append(Spacer(1, 20))
+
+    # ---------- RESPONSES TABLE (SORTED) ----------
+    content.append(Paragraph("<b>Responses</b>", styles["Heading2"]))
+    content.append(Spacer(1, 10))
+
+    # SORT QUESTIONS PROPERLY
+    sorted_responses = sorted(res['responses'].items(), key=lambda x: int(x[0].split()[1]))
+
+    response_data = [["Question", "Answer"]]
+
+    # ---------- RESPONSES TABLE WITH QUESTIONS ----------
+    content.append(Paragraph("<b>Responses</b>", styles["Heading2"]))
+    content.append(Spacer(1, 10))
+
+    sorted_responses = sorted(
+        res['responses'].items(),
+        key=lambda x: int(x[0].split()[1])
+    )
+
+    response_data = [["Question", "Your Answer"]]
+
+    for q, ans in sorted_responses:
+        q_num = int(q.split()[1])
+        question_text = QUESTIONS[q_num - 1]
+
+        full_question = f"Q{q_num}. {question_text}"
+        response_data.append([full_question, ans])
+
+    response_table = Table(response_data, colWidths=[320, 130])
+    response_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+        ('GRID', (0,0), (-1,-1), 0.3, colors.grey)
+    ]))
+
+    content.append(response_table)
+    content.append(Spacer(1, 20))
+
+
+    # ---------- DISCLAIMER ----------
+    content.append(Paragraph(
+        "<i>Disclaimer: This report is for awareness purposes only and not a medical diagnosis. "
+        "Please consult a mental health professional.</i>",
+        styles["Normal"]
+    ))
+
+    doc.build(content)
+
+    return send_file(file_path, as_attachment=True)
+
+
+# ---------- RUN ----------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(debug=True)
