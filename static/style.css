@@ -108,6 +108,14 @@ button:hover, .btn:hover {
     transform: translateY(-3px);
 }
 
+.message {
+    margin-top: 15px;
+    font-size: 15px;
+    line-height: 1.7;
+    text-align: left;
+    color: #4f5f59;
+}
+
 /* GRAPH */
 .bar-bg {
     background: #f1f1f1;
