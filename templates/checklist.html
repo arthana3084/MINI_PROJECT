@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>MindWatch 💛</title>
-
+    <title>MindWatch – Assessment</title>
+    <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
@@ -12,7 +12,7 @@
             background: #CDE4D3;
         }
 
-        /* NAVBAR (MATCH PREVIOUS PAGES) */
+        /* NAVBAR */
         .navbar {
             position: fixed;
             top: 0;
@@ -22,8 +22,9 @@
             padding: 12px 40px;
             background: #f2f4f3;
             z-index: 1000;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-
         .logo {
             display: flex;
             align-items: center;
@@ -32,57 +33,88 @@
             font-size: 20px;
             color: #1f4037;
         }
+        .logo img { height: 45px; }
 
-        .logo img {
-            height: 45px;
+        /* CATEGORY BADGE */
+        .category-badge {
+            margin-left: auto;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
         }
+        .badge-anxiety  { background: #fff3cd; color: #856404; }
+        .badge-depression { background: #d1ecf1; color: #0c5460; }
+        .badge-general  { background: #d4edda; color: #155724; }
 
+        /* CONTAINER */
         .container {
-            margin-top: 100px;
-            max-width: 900px;
+            margin-top: 90px;
+            max-width: 820px;
             margin-left: auto;
             margin-right: auto;
-            padding: 20px;
+            padding: 20px 20px 60px;
         }
 
-        /* slightly softer text */
-        .question-box p {
-            color: #2f5d50;
-        }
-
-        label {
-            color: #4f5f59;
-        }
-
-        /* TITLES */
         h2 {
             text-align: center;
             color: #2f5d50;
+            margin-bottom: 6px;
         }
-
-        p {
+        .subtitle {
             text-align: center;
             color: #6b7d75;
+            font-size: 14px;
             margin-bottom: 30px;
+        }
+
+        /* PROGRESS */
+        .progress-wrap {
+            margin-bottom: 28px;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6b7d75;
+            margin-bottom: 6px;
+        }
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: #d4e8dc;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7fbfa5, #4f8f74);
+            border-radius: 10px;
+            transition: width 0.4s ease;
         }
 
         /* QUESTION CARD */
         .question-box {
-            background: #F3F1E9;  /* linen */
-            padding: 25px;
+            background: #F3F1E9;
+            padding: 22px 25px;
             border-radius: 18px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            margin-bottom: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
-
+        .question-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
         .question-box p {
             text-align: left;
             color: #2f5d50;
             font-weight: 500;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            font-size: 15px;
         }
 
-        /* ALIGN RADIO + TEXT NICELY */
+        /* RADIO LABELS */
         label {
             display: flex;
             align-items: center;
@@ -91,75 +123,72 @@
             color: #4f5f59;
             font-size: 14px;
             cursor: pointer;
+            transition: color 0.2s;
         }
+        label:hover { color: #2f5d50; }
 
-        /* RADIO BUTTON */
+        /* CUSTOM RADIO */
         input[type="radio"] {
             appearance: none;
             -webkit-appearance: none;
-
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border: 2px solid #7fbfa5;
             border-radius: 50%;
             position: relative;
             cursor: pointer;
+            flex-shrink: 0;
+            transition: border-color 0.2s;
         }
-
-        /* DOT */
         input[type="radio"]::before {
             content: "";
-            width: 8px;
-            height: 8px;
-            background: #7fbfa5;
+            width: 9px;
+            height: 9px;
+            background: #4f8f74;
             border-radius: 50%;
-
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            transition: 0.2s ease;
+            transition: transform 0.2s ease;
+        }
+        input[type="radio"]:checked { border-color: #4f8f74; }
+        input[type="radio"]:checked::before { transform: translate(-50%, -50%) scale(1); }
+
+        /* ANSWERED INDICATOR */
+        .question-box.answered {
+            border-left: 4px solid #4f8f74;
         }
 
-        input[type="radio"]:checked::before {
-            transform: translate(-50%, -50%) scale(1);
+        /* SUBMIT BUTTON */
+        .submit-wrap {
+            text-align: center;
+            margin-top: 30px;
         }
-
-        button:hover {
-            background: #88bfa5;
-            transform: scale(1.05);
-        }
-
         button {
-            display: block;
-            margin: 40px auto;
-            padding: 14px 40px;
-
+            padding: 14px 50px;
             border: none;
             border-radius: 30px;
-
             background: linear-gradient(135deg, #9fcbb3, #7fbfa5);
             color: white;
-
             font-family: 'Poppins', sans-serif;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
-
             cursor: pointer;
             transition: all 0.3s ease;
-
-            box-shadow: 0 6px 15px rgba(127, 191, 165, 0.3);
+            box-shadow: 0 6px 20px rgba(127,191,165,0.35);
         }
-
-        /* HOVER EFFECT */
         button:hover {
             transform: translateY(-2px);
             background: linear-gradient(135deg, #88bfa5, #6fae92);
         }
+        button:active { transform: scale(0.97); }
 
-        /* CLICK EFFECT */
-        button:active {
-            transform: scale(0.97);
+        /* VALIDATION MESSAGE */
+        .val-msg {
+            display: none;
+            color: #c0392b;
+            font-size: 13px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -169,112 +198,156 @@
     <!-- NAVBAR -->
     <div class="navbar">
         <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo.png') }}">
+            <img src="/static/logo.png" alt="logo">
             MindWatch
         </div>
+        {% if category == "anxiety" %}
+            <span class="category-badge badge-anxiety">🧠 Anxiety Assessment</span>
+        {% elif category == "depression" %}
+            <span class="category-badge badge-depression">🌧️ Depression Assessment</span>
+        {% else %}
+            <span class="category-badge badge-general">🌿 General Wellness Check</span>
+        {% endif %}
     </div>
 
     <div class="container">
 
-        <!-- ANXIETY -->
+        <!-- HEADING -->
         {% if category == "anxiety" %}
-        <h2>We sense signs of anxiety 💛</h2>
-        <p>Let’s understand this better. Please answer honestly.</p>
+            <h2>We sense signs of anxiety 💛</h2>
+            <p class="subtitle">Let's understand this better. Please answer honestly — there are no right or wrong answers.</p>
+            {% set questions = [
+                "I feel nervous, anxious, or on edge",
+                "I find it difficult to control my worries",
+                "I tend to overthink situations excessively",
+                "I feel restless or unable to relax",
+                "I experience sudden feelings of panic",
+                "I worry about things beyond my control",
+                "I feel tense or easily startled",
+                "I struggle to concentrate due to worry",
+                "I feel a sense of impending danger",
+                "I have trouble sleeping due to overthinking"
+            ] %}
 
-        {% set questions = [
-        "I feel nervous, anxious, or on edge",
-        "I find it difficult to control my worries",
-        "I tend to overthink situations excessively",
-        "I feel restless or unable to relax",
-        "I experience sudden feelings of panic",
-        "I worry about things beyond my control",
-        "I feel tense or easily startled",
-        "I struggle to concentrate due to worry",
-        "I feel a sense of impending danger",
-        "I have trouble sleeping due to overthinking"
-        ] %}
-
-        <!-- DEPRESSION -->
         {% elif category == "depression" %}
-        <h2>We sense signs of low mood 💛</h2>
-        <p>Let’s gently explore how you’ve been feeling.</p>
+            <h2>We sense signs of low mood 💛</h2>
+            <p class="subtitle">Let's gently explore how you've been feeling. Take your time.</p>
+            {% set questions = [
+                "I feel down, depressed, or hopeless",
+                "I have little interest or pleasure in activities",
+                "I feel tired or lack energy",
+                "I struggle with motivation",
+                "I feel worthless or excessively guilty",
+                "I find it difficult to concentrate",
+                "I feel emotionally numb",
+                "I withdraw from social interactions",
+                "I feel like things won't improve",
+                "I struggle to manage daily routines"
+            ] %}
 
-        {% set questions = [
-        "I feel down, depressed, or hopeless",
-        "I have little interest or pleasure in activities",
-        "I feel tired or lack energy",
-        "I struggle with motivation",
-        "I feel worthless or excessively guilty",
-        "I find it difficult to concentrate",
-        "I feel emotionally numb",
-        "I withdraw from social interactions",
-        "I feel like things won’t improve",
-        "I struggle to manage daily routines"
-        ] %}
-
-        <!-- GENERAL -->
         {% else %}
-        <h2>A gentle check-in with yourself</h2>
-        <p>Answer these to help us understand your emotional well-being.</p>
+            <h2>A gentle check-in with yourself 🌿</h2>
+            <p class="subtitle">Answer these questions to help us understand your overall emotional well-being.</p>
+            {% set questions = [
+                "I feel calm and emotionally balanced",
+                "I feel satisfied with my life",
+                "I feel hopeful about my future",
+                "I am able to manage stress effectively",
+                "I feel connected to people around me",
+                "I feel motivated to carry out daily tasks",
+                "I enjoy activities I usually like",
+                "I feel confident in myself",
+                "I feel mentally stable and in control",
+                "I feel a sense of purpose in life",
 
-        {% set questions = [
-        "I feel calm and emotionally balanced",
-        "I feel satisfied with my life",
-        "I feel hopeful about my future",
-        "I am able to manage stress effectively",
-        "I feel connected to people around me",
-        "I feel motivated to carry out daily tasks",
-        "I enjoy activities I usually like",
-        "I feel confident in myself",
-        "I feel mentally stable and in control",
-        "I feel a sense of purpose in life",
+                "I feel nervous, anxious, or on edge",
+                "I find it difficult to control my worries",
+                "I overthink situations excessively",
+                "I feel restless or unable to relax",
+                "I experience sudden feelings of panic",
+                "I worry about things beyond my control",
+                "I feel tense or easily startled",
+                "I struggle to concentrate due to worry",
+                "I feel a sense of impending danger",
+                "I have trouble sleeping due to overthinking",
 
-        "I feel nervous, anxious, or on edge",
-        "I find it difficult to control my worries",
-        "I overthink situations excessively",
-        "I feel restless or unable to relax",
-        "I experience sudden feelings of panic",
-        "I worry about things beyond my control",
-        "I feel tense or easily startled",
-        "I struggle to concentrate due to worry",
-        "I feel a sense of impending danger",
-        "I have trouble sleeping due to overthinking",
-
-        "I feel down, depressed, or hopeless",
-        "I have little interest or pleasure in activities",
-        "I feel tired or lack energy",
-        "I struggle with motivation",
-        "I feel worthless or excessively guilty",
-        "I find it difficult to concentrate",
-        "I feel emotionally numb",
-        "I withdraw from social interactions",
-        "I feel like things won’t improve",
-        "I struggle to manage daily routines"
-        ] %}
-
+                "I feel down, depressed, or hopeless",
+                "I have little interest or pleasure in activities",
+                "I feel tired or lack energy",
+                "I struggle with motivation",
+                "I feel worthless or excessively guilty",
+                "I find it difficult to concentrate",
+                "I feel emotionally numb",
+                "I withdraw from social interactions",
+                "I feel like things won't improve",
+                "I struggle to manage daily routines"
+            ] %}
         {% endif %}
 
-        <form action="/predict" method="POST">
+        <!-- PROGRESS BAR -->
+        <div class="progress-wrap">
+            <div class="progress-label">
+                <span>Progress</span>
+                <span id="progressText">0 / {{ questions|length }} answered</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressBar" style="width:0%"></div>
+            </div>
+        </div>
+
+        <!-- FORM -->
+        <form action="/predict" method="POST" id="assessForm" onsubmit="return validateForm()">
+            <!-- Pass category so /predict knows which scoring logic to use -->
+            <input type="hidden" name="category" value="{{ category }}">
             <input type="hidden" name="text" value="{{ text }}">
 
             {% for i in range(questions|length) %}
-            <div class="question-box">
-
+            <div class="question-box" id="qbox{{ i + 1 }}">
                 <p><b>Q{{ i + 1 }}:</b> {{ questions[i] }}</p>
 
-                <label><input type="radio" name="q{{ i + 1 }}" value="0" required> Not at all</label>
-                <label><input type="radio" name="q{{ i + 1 }}" value="1"> Rarely</label>
-                <label><input type="radio" name="q{{ i + 1 }}" value="2"> Sometimes</label>
-                <label><input type="radio" name="q{{ i + 1 }}" value="3"> Often</label>
-                <label><input type="radio" name="q{{ i + 1 }}" value="4"> Almost always</label>
-
+                <label><input type="radio" name="q{{ i + 1 }}" value="0" required onchange="markAnswered({{ i + 1 }})"> Not at all</label>
+                <label><input type="radio" name="q{{ i + 1 }}" value="1" onchange="markAnswered({{ i + 1 }})"> Rarely</label>
+                <label><input type="radio" name="q{{ i + 1 }}" value="2" onchange="markAnswered({{ i + 1 }})"> Sometimes</label>
+                <label><input type="radio" name="q{{ i + 1 }}" value="3" onchange="markAnswered({{ i + 1 }})"> Often</label>
+                <label><input type="radio" name="q{{ i + 1 }}" value="4" onchange="markAnswered({{ i + 1 }})"> Almost always</label>
             </div>
             {% endfor %}
 
-            <button type="submit">Analyze</button>
+            <div class="submit-wrap">
+                <button type="submit">Analyze My Results</button>
+                <div class="val-msg" id="valMsg">⚠️ Please answer all questions before submitting.</div>
+            </div>
         </form>
 
     </div>
+
+<script>
+    const totalQuestions = {{ questions|length }};
+    const answered = new Set();
+
+    function markAnswered(qNum) {
+        answered.add(qNum);
+        document.getElementById('qbox' + qNum).classList.add('answered');
+        const pct = Math.round((answered.size / totalQuestions) * 100);
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('progressText').textContent = answered.size + ' / ' + totalQuestions + ' answered';
+    }
+
+    function validateForm() {
+        if (answered.size < totalQuestions) {
+            document.getElementById('valMsg').style.display = 'block';
+            // Scroll to first unanswered
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (!answered.has(i)) {
+                    document.getElementById('qbox' + i).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    break;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+</script>
 
 </body>
 </html>

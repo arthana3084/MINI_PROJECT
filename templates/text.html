@@ -2,65 +2,67 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MindWatch</title>
-
+<title>MindWatch – Express Yourself</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background: #CDE4D3; /* 🌿 mint green */
+    background: #CDE4D3;
 }
 
+/* NAVBAR */
 .navbar {
-    width: 100%;
+    position: fixed;
     height: 70px;
-    background: #f2f4f3;  /* 👈 your color */
-    
+    top: 0; left: 0;
+    width: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    
-    padding: 0 20px;
+    padding: 12px 40px;
+    background: #f2f4f3;
     box-sizing: border-box;
-
+    z-index: 1000;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
-
-.split {
+.nav-left {
     display: flex;
-    height: 100vh;
+    align-items: center;
+    gap: 10px;
+}
+.logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+.brand {
+    font-weight: 600;
+    font-size: 20px;
+    color: #1f4037;
 }
 
-/* 🔹 MAIN LAYOUT */
+/* LAYOUT */
 .container {
     display: flex;
     height: 100vh;
 }
 
-/* 🌊 LEFT SIDE */
-/* LEFT IMAGE */
 .left {
     width: 50%;
     position: relative;
-    overflow: hidden; /* 👈 IMPORTANT */
+    overflow: hidden;
     background: url("/static/bg.jpg") no-repeat center;
     background-size: cover;
 }
-
-/* FADE ONLY LEFT */
 .left::after {
     content: "";
     position: absolute;
-    inset: 0; /* better than top/left/width/height */
-
+    inset: 0;
     background: rgba(205, 228, 211, 0.5);
-    pointer-events: none; /* 👈 prevents blocking clicks */
+    pointer-events: none;
 }
 
-/* RIGHT SIDE */
 .right {
     width: 50%;
     display: flex;
@@ -73,32 +75,40 @@ body {
     background: white;
     padding: 40px;
     border-radius: 20px;
-    width: 400px;
+    width: 420px;
     text-align: center;
-
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .card h2 {
+    margin-bottom: 8px;
+    color: #0a8a50;
+}
+
+.card .subtitle {
+    color: #6b7d75;
+    font-size: 13px;
     margin-bottom: 20px;
-    color: #0a8a50; 
 }
 
 /* TEXTAREA */
 textarea {
     width: 100%;
-    height: 120px;
+    height: 140px;
     border-radius: 12px;
-    border: 1.5px solid #0a8a50;  /* ✅ SAME AS HEADING */
+    border: 1.5px solid #0a8a50;
     padding: 12px;
     resize: none;
-
-    background: white;  /* linen */
-    color: #0a8a50;       /* ✅ SAME TEXT COLOR */
+    background: white;
+    color: #2f5d50;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: box-shadow 0.2s;
 }
 textarea::placeholder {
     color: #0a8a50;
-    opacity: 0.6;
+    opacity: 0.55;
 }
 textarea:focus {
     outline: none;
@@ -106,101 +116,118 @@ textarea:focus {
     box-shadow: 0 0 8px rgba(10, 138, 80, 0.3);
 }
 
+/* CHAR COUNT */
+.char-count {
+    text-align: right;
+    font-size: 12px;
+    color: #9ab3a8;
+    margin-top: 4px;
+}
+
 /* BUTTON */
 button {
     margin-top: 20px;
-    padding: 12px 30px;
+    padding: 12px 36px;
     border-radius: 25px;
     border: none;
-
     background: linear-gradient(135deg, #7fbfa2, #4f8f74);
     color: white;
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-button:hover {
-    background: #4f8f74;
-}
-
-
-/* HEADER */
-.navbar {
-    position: fixed;   /* 🔥 change this */
-    height: 70px;
-    top: 0;
-    left: 0;
-    width: 100%;
-    
-    display: flex;
-    align-items: center;
-    padding: 12px 40px;
-
-    background: #f2f4f3;
-
-    z-index: 1000;   /* 🔥 important */
-}
-/* LOGO TEXT */
-.logo {
-    height: 40px;
-    width: auto;
-    object-fit: contain;
-    display: block;   /* 👈 NOT flex */
-}
-.nav-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.brand {
     font-weight: 600;
-    font-size: 20px;
-    color: #1f4037;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 15px rgba(79, 143, 116, 0.3);
+}
+button:hover {
+    background: linear-gradient(135deg, #6fae92, #3f7f64);
+    transform: translateY(-2px);
+}
+button:active {
+    transform: scale(0.97);
+}
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
 }
 
-/* LOGO IMAGE */
-.logo img {
-    height: 48px;   /* 🔥 reduced from 55px */
-    width: 48px;
-    object-fit: contain;
+/* LOADING SPINNER */
+.spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
 }
-
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
     <header class="navbar">
-    <div class="nav-left">
-        <img src="/static/logo.png" class="logo">
-        <span class="brand">MindWatch</span>
-    </div>
+        <div class="nav-left">
+            <img src="/static/logo.png" class="logo" alt="MindWatch Logo">
+            <span class="brand">MindWatch</span>
+        </div>
     </header>
 
-    <!-- 🌊 LEFT SIDE -->
-    <div class="left">
-        <div class="left-content">
-            
-        </div>
-    </div>
+    <!-- LEFT -->
+    <div class="left"></div>
 
-    <!-- 📝 RIGHT SIDE -->
+    <!-- RIGHT -->
     <div class="right">
         <div class="card">
             <h2>Tell us how you feel</h2>
+            <p class="subtitle">Write freely — we'll understand what you need &amp; ask the right questions.</p>
 
-            <textarea placeholder="How are you feeling right now?"></textarea>
+            <form action="/analyze_text" method="POST" id="textForm" onsubmit="handleSubmit(event)">
+                <textarea
+                    id="userText"
+                    name="user_text"
+                    placeholder="e.g. I've been feeling really anxious lately, can't sleep and keep worrying..."
+                    oninput="updateCount(this)"
+                    required
+                    minlength="10"
+                ></textarea>
+                <div class="char-count"><span id="charCount">0</span> characters</div>
 
-            <button type="button" onclick="window.location.href='/checklist_general'">
-    Continue
-</button>
+                <button type="submit" id="submitBtn">
+                    <span id="btnText">Analyze &amp; Continue</span>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+            </form>
         </div>
     </div>
-
 </div>
+
+<script>
+function updateCount(el) {
+    document.getElementById('charCount').textContent = el.value.length;
+}
+
+function handleSubmit(e) {
+    const text = document.getElementById('userText').value.trim();
+    if (text.length < 10) {
+        e.preventDefault();
+        alert('Please write at least a few words so we can understand how you feel.');
+        return;
+    }
+    const btn = document.getElementById('submitBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+    btn.disabled = true;
+    btnText.style.display = 'none';
+    spinner.style.display = 'block';
+}
+</script>
 
 </body>
 </html>

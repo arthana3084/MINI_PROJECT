@@ -1,231 +1,347 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Your Result</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>MindWatch – Your Results</title>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-      rel="stylesheet"
-    />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: #cde4d3;
+    }
 
-    <style>
-      body {
-        margin: 0;
-        font-family: "Poppins", sans-serif;
-        background: #cde4d3;
-      }
+    /* NAVBAR */
+    .navbar {
+      position: fixed;
+      top: 0; width: 100%;
+      padding: 12px 40px;
+      background: #f2f4f3;
+      display: flex;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-sizing: border-box;
+    }
+    .logo { height: 40px; }
+    .brand {
+      font-weight: 600;
+      font-size: 20px;
+      color: #1f4037;
+      margin-left: 10px;
+    }
 
-      .navbar {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        padding: 12px 40px;
-        background: #f2f4f3;
-        display: flex;
-        align-items: center;
-      }
+    /* CONTAINER */
+    .container {
+      max-width: 860px;
+      margin: 100px auto 60px;
+      padding: 0 20px;
+    }
 
-      .logo {
-        height: 40px;
-      }
+    /* RESULT CARD */
+    .result-card {
+      background: #f3f1e9;
+      padding: 35px 30px;
+      border-radius: 22px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+      animation: fadeUp 0.6s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-      .brand {
-        font-weight: 600;
-        font-size: 20px;
-        color: #1f4037;
-        margin-left: 10px;
-      }
+    .result-card h3 {
+      text-align: center;
+      color: #2f5d50;
+      margin-bottom: 24px;
+      font-size: 18px;
+    }
 
-      .container {
-        max-width: 900px;
-        margin: 100px auto;
-        padding: 20px;
-      }
+    /* BARS */
+    .bars { margin-bottom: 28px; }
+    .bar { margin: 14px 0; text-align: left; }
+    .bar span {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #2f5d50;
+    }
+    .bar-track {
+      width: 100%;
+      height: 14px;
+      background: #d8ece0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 1s ease;
+    }
+    .bar-fill.dep { background: linear-gradient(90deg, #f97f7f, #e74c3c); }
+    .bar-fill.anx { background: linear-gradient(90deg, #f8c56d, #e67e22); }
+    .bar-fill.well { background: linear-gradient(90deg, #7fbfa5, #4f8f74); }
 
-      .result-card {
-        background: #f3f1e9;
-        padding: 30px;
-        border-radius: 20px;
-        text-align: center;
-      }
+    /* LEVEL BOXES */
+    .levels {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 26px 0;
+    }
+    .level-box {
+      background: white;
+      padding: 16px 28px;
+      border-radius: 14px;
+      min-width: 140px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .level-box h4 {
+      margin: 0 0 6px;
+      color: #2f5d50;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .level-box p { margin: 0; font-weight: 600; font-size: 15px; color: #4f5f59; }
 
-      /* LEVEL BOXES */
-      .levels {
-        display: flex;
-        justify-content: space-around;
-        margin: 30px 0;
-        flex-wrap: wrap;
-      }
+    /* RISK BADGE */
+    .risk-badge {
+      display: inline-block;
+      margin: 18px auto 0;
+      padding: 10px 28px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 16px;
+      text-align: center;
+    }
+    .risk-high       { background: #fde8e8; color: #c0392b; }
+    .risk-moderate   { background: #fff3cd; color: #856404; }
+    .risk-mild       { background: #d1ecf1; color: #0c5460; }
+    .risk-minimal    { background: #d4edda; color: #155724; }
+    .risk-other      { background: #e9ecef; color: #495057; }
+    .risk-center     { text-align: center; }
 
-      .level-box {
-        background: white;
-        padding: 15px 25px;
-        border-radius: 12px;
-        margin: 10px;
-        min-width: 150px;
-      }
+    /* MESSAGE */
+    .message {
+      margin-top: 22px;
+      background: white;
+      padding: 20px 22px;
+      border-radius: 14px;
+      text-align: left;
+      line-height: 1.7;
+      color: #4f5f59;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
 
-      /* GRAPH */
-      .bars {
-        margin-top: 20px;
-      }
+    /* DOWNLOAD */
+    .download-btn {
+      display: block;
+      width: fit-content;
+      margin: 24px auto;
+      padding: 13px 36px;
+      border-radius: 30px;
+      border: none;
+      background: linear-gradient(135deg, #7fbfa5, #4f8f74);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 18px rgba(79,143,116,0.3);
+    }
+    .download-btn:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #6fae92, #3f7f64);
+    }
 
-      .bar {
-        margin: 15px 0;
-        text-align: left;
-      }
+    /* SUPPORT */
+    .support-card {
+      background: #f3f1e9;
+      padding: 28px;
+      border-radius: 22px;
+      margin-top: 30px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+    .support-card h2 {
+      text-align: center;
+      color: #2f5d50;
+      margin-bottom: 20px;
+    }
+    .support-card h3 { color: #2f5d50; margin-bottom: 10px; }
 
-      .bar span {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 500;
-        color: #2f5d50;
-      }
+    .resource {
+      background: white;
+      padding: 16px 18px;
+      margin: 10px 0;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .resource-info h4 { margin: 0 0 4px; color: #2f5d50; font-size: 15px; }
+    .resource-info p  { margin: 0; color: #6b7d75; font-size: 13px; }
+    .resource a {
+      padding: 8px 18px;
+      border-radius: 20px;
+      background: #7fbfa5;
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .resource a:hover { background: #4f8f74; }
+  </style>
+</head>
 
-      .bar-track {
-        width: 100%;
-        height: 12px;
-        background: #e0e0e0;
-        border-radius: 10px;
-        overflow: hidden;
-      }
+<body>
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <img src="/static/logo.png" class="logo" alt="logo">
+    <span class="brand">MindWatch</span>
+  </div>
 
-      .bar-fill {
-        height: 100%;
-        background: linear-gradient(135deg, #7fbfa5, #4f8f74);
-        border-radius: 10px;
-      }
+  <div class="container">
+    <div class="result-card">
+      <h3>📊 Your Assessment Results</h3>
 
-      /* MESSAGE */
-      .message {
-        margin-top: 20px;
-        text-align: left;
-        line-height: 1.6;
-        color: #4f5f59;
-      }
-
-      /* SUPPORT */
-      .support-card {
-        background: #f3f1e9;
-        padding: 20px;
-        border-radius: 20px;
-        margin-top: 30px;
-      }
-
-      .resource {
-        background: white;
-        padding: 15px;
-        margin: 10px 0;
-        border-radius: 12px;
-      }
-
-      button {
-        margin: 20px auto;
-        display: block;
-        padding: 12px 30px;
-        border-radius: 30px;
-        border: none;
-        background: #7fbfa5;
-        color: white;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="navbar">
-      <img src="/static/logo.png" class="logo" />
-      <span class="brand">MindWatch</span>
-    </div>
-
-    <div class="container">
-      <div class="result-card">
-        <!-- GRAPH FIRST -->
-        <div class="bars">
-          <div class="bar">
-            <span>Depression ({{ dep_level }})</span>
-            <div class="bar-track">
-              <div class="bar-fill" style="width: {{ dep_ui }}%"></div>
-            </div>
-          </div>
-
-          <div class="bar">
-            <span>Anxiety ({{ anx_level }})</span>
-            <div class="bar-track">
-              <div class="bar-fill" style="width: {{ anx_ui }}%"></div>
-            </div>
-          </div>
-
-          <div class="bar">
-            <span>Well-being</span>
-            <div class="bar-track">
-              <div class="bar-fill" style="width: {{ norm_ui }}%"></div>
-            </div>
+      <!-- BARS (only show bars that were assessed) -->
+      <div class="bars">
+        {% if dep_level != "N/A" %}
+        <div class="bar">
+          <span>Depression – {{ dep_level }}</span>
+          <div class="bar-track">
+            <div class="bar-fill dep" style="width: 0%" data-target="{{ dep_ui }}"></div>
           </div>
         </div>
+        {% endif %}
 
-        <!-- LEVEL BOXES -->
-        <div class="levels">
-          <div class="level-box">
-            <h4>Depression</h4>
-            <p>{{ dep_level }}</p>
-          </div>
-
-          <div class="level-box">
-            <h4>Anxiety</h4>
-            <p>{{ anx_level }}</p>
-          </div>
-
-          <div class="level-box">
-            <h4>Well-being</h4>
-            <p>
-              {% if norm_ui > 70 %} Good {% elif norm_ui > 40 %} Moderate {%
-              else %} Low {% endif %}
-            </p>
+        {% if anx_level != "N/A" %}
+        <div class="bar">
+          <span>Anxiety – {{ anx_level }}</span>
+          <div class="bar-track">
+            <div class="bar-fill anx" style="width: 0%" data-target="{{ anx_ui }}"></div>
           </div>
         </div>
+        {% endif %}
 
-        <h2>{{ risk }}</h2>
-
-        <!-- ✅ FIXED MESSAGE -->
-        <div class="message">{{ message | safe }}</div>
+        <div class="bar">
+          <span>Well-being</span>
+          <div class="bar-track">
+            <div class="bar-fill well" style="width: 0%" data-target="{{ norm_ui }}"></div>
+          </div>
+        </div>
       </div>
 
-      <!-- DOWNLOAD -->
-      <a href="/download">
-        <button>Download Report</button>
-      </a>
+      <!-- LEVEL BOXES -->
+      <div class="levels">
+        {% if dep_level != "N/A" %}
+        <div class="level-box">
+          <h4>Depression</h4>
+          <p>{{ dep_level }}</p>
+        </div>
+        {% endif %}
 
-      <!-- SUPPORT -->
-      <div class="support-card">
-        <h2>Recommended Support</h2>
+        {% if anx_level != "N/A" %}
+        <div class="level-box">
+          <h4>Anxiety</h4>
+          <p>{{ anx_level }}</p>
+        </div>
+        {% endif %}
 
-        {% if anxiety_support %}
-        <h3>🧠 Anxiety Support</h3>
-        {% for s in anxiety_support %}
-        <div class="resource">
-          <h4>{{ s.name }}</h4>
-          <p>{{ s.desc }}</p>
-          <a href="{{ s.link }}" target="_blank">Access</a>
+        <div class="level-box">
+          <h4>Well-being</h4>
+          <p>{% if norm_ui >= 70 %}Good{% elif norm_ui >= 40 %}Moderate{% else %}Low{% endif %}</p>
         </div>
-        {% endfor %} {% endif %} {% if depression_support %}
-        <h3>🌧️ Depression Support</h3>
-        {% for s in depression_support %}
-        <div class="resource">
-          <h4>{{ s.name }}</h4>
-          <p>{{ s.desc }}</p>
-          <a href="{{ s.link }}" target="_blank">Access</a>
-        </div>
-        {% endfor %} {% endif %} {% if general_support %}
-        <h3>🌿 General Wellness</h3>
-        {% for s in general_support %}
-        <div class="resource">
-          <h4>{{ s.name }}</h4>
-          <p>{{ s.desc }}</p>
-          <a href="{{ s.link }}" target="_blank">Access</a>
-        </div>
-        {% endfor %} {% endif %}
       </div>
+
+      <!-- RISK BADGE -->
+      <div class="risk-center">
+        {% if "High" in risk %}
+          <span class="risk-badge risk-high">⚠️ {{ risk }}</span>
+        {% elif "Moderate" in risk %}
+          <span class="risk-badge risk-moderate">⚡ {{ risk }}</span>
+        {% elif "Mild" in risk %}
+          <span class="risk-badge risk-mild">ℹ️ {{ risk }}</span>
+        {% elif "Minimal" in risk %}
+          <span class="risk-badge risk-minimal">✅ {{ risk }}</span>
+        {% else %}
+          <span class="risk-badge risk-other">{{ risk }}</span>
+        {% endif %}
+      </div>
+
+      <!-- MESSAGE -->
+      <div class="message">{{ message | safe }}</div>
     </div>
-  </body>
+
+    <!-- DOWNLOAD -->
+    <a href="/download" class="download-btn">⬇️ Download PDF Report</a>
+
+    <!-- SUPPORT -->
+    <div class="support-card">
+      <h2>💙 Recommended Support</h2>
+
+      {% if anxiety_support %}
+      <h3>🧠 Anxiety Support</h3>
+      {% for s in anxiety_support %}
+      <div class="resource">
+        <div class="resource-info">
+          <h4>{{ s.name }}</h4>
+          <p>{{ s.desc }}</p>
+        </div>
+        <a href="{{ s.link }}" target="_blank">Visit</a>
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      {% if depression_support %}
+      <h3>🌧️ Depression Support</h3>
+      {% for s in depression_support %}
+      <div class="resource">
+        <div class="resource-info">
+          <h4>{{ s.name }}</h4>
+          <p>{{ s.desc }}</p>
+        </div>
+        <a href="{{ s.link }}" target="_blank">Visit</a>
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      {% if general_support %}
+      <h3>🌿 General Wellness</h3>
+      {% for s in general_support %}
+      <div class="resource">
+        <div class="resource-info">
+          <h4>{{ s.name }}</h4>
+          <p>{{ s.desc }}</p>
+        </div>
+        <a href="{{ s.link }}" target="_blank">Visit</a>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Animate bars on load -->
+  <script>
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.bar-fill').forEach(bar => {
+        const target = bar.getAttribute('data-target');
+        setTimeout(() => { bar.style.width = target + '%'; }, 200);
+      });
+    });
+  </script>
+</body>
 </html>
