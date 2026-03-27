@@ -1,116 +1,280 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>MindWatch 💛</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #CDE4D3;
+        }
+
+        /* NAVBAR (MATCH PREVIOUS PAGES) */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 12px 40px;
+            background: #f2f4f3;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 20px;
+            color: #1f4037;
+        }
+
+        .logo img {
+            height: 45px;
+        }
+
+        .container {
+            margin-top: 100px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+        }
+
+        /* slightly softer text */
+        .question-box p {
+            color: #2f5d50;
+        }
+
+        label {
+            color: #4f5f59;
+        }
+
+        /* TITLES */
+        h2 {
+            text-align: center;
+            color: #2f5d50;
+        }
+
+        p {
+            text-align: center;
+            color: #6b7d75;
+            margin-bottom: 30px;
+        }
+
+        /* QUESTION CARD */
+        .question-box {
+            background: #F3F1E9;  /* linen */
+            padding: 25px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        .question-box p {
+            text-align: left;
+            color: #2f5d50;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        /* ALIGN RADIO + TEXT NICELY */
+        label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            color: #4f5f59;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* RADIO BUTTON */
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+
+            width: 16px;
+            height: 16px;
+            border: 2px solid #7fbfa5;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* DOT */
+        input[type="radio"]::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: #7fbfa5;
+            border-radius: 50%;
+
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: 0.2s ease;
+        }
+
+        input[type="radio"]:checked::before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        button:hover {
+            background: #88bfa5;
+            transform: scale(1.05);
+        }
+
+        button {
+            display: block;
+            margin: 40px auto;
+            padding: 14px 40px;
+
+            border: none;
+            border-radius: 30px;
+
+            background: linear-gradient(135deg, #9fcbb3, #7fbfa5);
+            color: white;
+
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            box-shadow: 0 6px 15px rgba(127, 191, 165, 0.3);
+        }
+
+        /* HOVER EFFECT */
+        button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #88bfa5, #6fae92);
+        }
+
+        /* CLICK EFFECT */
+        button:active {
+            transform: scale(0.97);
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="header">🌅 MindWatch</div>
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}">
+            MindWatch
+        </div>
+    </div>
 
-<div class="container">
+    <div class="container">
 
-<!-- ANXIETY -->
-{% if category == "anxiety" %}
-<h2>We sense signs of anxiety 💛</h2>
-<p>Let’s understand this better. Please answer honestly.</p>
+        <!-- ANXIETY -->
+        {% if category == "anxiety" %}
+        <h2>We sense signs of anxiety 💛</h2>
+        <p>Let’s understand this better. Please answer honestly.</p>
 
-{% set questions = [
-"I feel nervous, anxious, or on edge",
-"I find it difficult to control my worries",
-"I tend to overthink situations excessively",
-"I feel restless or unable to relax",
-"I experience sudden feelings of panic",
-"I worry about things beyond my control",
-"I feel tense or easily startled",
-"I struggle to concentrate due to worry",
-"I feel a sense of impending danger",
-"I have trouble sleeping due to overthinking"
-] %}
+        {% set questions = [
+        "I feel nervous, anxious, or on edge",
+        "I find it difficult to control my worries",
+        "I tend to overthink situations excessively",
+        "I feel restless or unable to relax",
+        "I experience sudden feelings of panic",
+        "I worry about things beyond my control",
+        "I feel tense or easily startled",
+        "I struggle to concentrate due to worry",
+        "I feel a sense of impending danger",
+        "I have trouble sleeping due to overthinking"
+        ] %}
 
-<!-- DEPRESSION -->
-{% elif category == "depression" %}
-<h2>We sense signs of low mood 💛</h2>
-<p>Let’s gently explore how you’ve been feeling.</p>
+        <!-- DEPRESSION -->
+        {% elif category == "depression" %}
+        <h2>We sense signs of low mood 💛</h2>
+        <p>Let’s gently explore how you’ve been feeling.</p>
 
-{% set questions = [
-"I feel down, depressed, or hopeless",
-"I have little interest or pleasure in activities",
-"I feel tired or lack energy",
-"I struggle with motivation",
-"I feel worthless or excessively guilty",
-"I find it difficult to concentrate",
-"I feel emotionally numb",
-"I withdraw from social interactions",
-"I feel like things won’t improve",
-"I struggle to manage daily routines"
-] %}
+        {% set questions = [
+        "I feel down, depressed, or hopeless",
+        "I have little interest or pleasure in activities",
+        "I feel tired or lack energy",
+        "I struggle with motivation",
+        "I feel worthless or excessively guilty",
+        "I find it difficult to concentrate",
+        "I feel emotionally numb",
+        "I withdraw from social interactions",
+        "I feel like things won’t improve",
+        "I struggle to manage daily routines"
+        ] %}
 
-<!-- GENERAL -->
-{% else %}
-<h2>A gentle check-in with yourself 💛</h2>
-<p>Answer these to help us understand your emotional well-being.</p>
+        <!-- GENERAL -->
+        {% else %}
+        <h2>A gentle check-in with yourself</h2>
+        <p>Answer these to help us understand your emotional well-being.</p>
 
-{% set questions = [
-"I feel calm and emotionally balanced",
-"I feel satisfied with my life",
-"I feel hopeful about my future",
-"I am able to manage stress effectively",
-"I feel connected to people around me",
-"I feel motivated to carry out daily tasks",
-"I enjoy activities I usually like",
-"I feel confident in myself",
-"I feel mentally stable and in control",
-"I feel a sense of purpose in life",
+        {% set questions = [
+        "I feel calm and emotionally balanced",
+        "I feel satisfied with my life",
+        "I feel hopeful about my future",
+        "I am able to manage stress effectively",
+        "I feel connected to people around me",
+        "I feel motivated to carry out daily tasks",
+        "I enjoy activities I usually like",
+        "I feel confident in myself",
+        "I feel mentally stable and in control",
+        "I feel a sense of purpose in life",
 
-"I feel nervous, anxious, or on edge",
-"I find it difficult to control my worries",
-"I overthink situations excessively",
-"I feel restless or unable to relax",
-"I experience sudden feelings of panic",
-"I worry about things beyond my control",
-"I feel tense or easily startled",
-"I struggle to concentrate due to worry",
-"I feel a sense of impending danger",
-"I have trouble sleeping due to overthinking",
+        "I feel nervous, anxious, or on edge",
+        "I find it difficult to control my worries",
+        "I overthink situations excessively",
+        "I feel restless or unable to relax",
+        "I experience sudden feelings of panic",
+        "I worry about things beyond my control",
+        "I feel tense or easily startled",
+        "I struggle to concentrate due to worry",
+        "I feel a sense of impending danger",
+        "I have trouble sleeping due to overthinking",
 
-"I feel down, depressed, or hopeless",
-"I have little interest or pleasure in activities",
-"I feel tired or lack energy",
-"I struggle with motivation",
-"I feel worthless or excessively guilty",
-"I find it difficult to concentrate",
-"I feel emotionally numb",
-"I withdraw from social interactions",
-"I feel like things won’t improve",
-"I struggle to manage daily routines"
-] %}
+        "I feel down, depressed, or hopeless",
+        "I have little interest or pleasure in activities",
+        "I feel tired or lack energy",
+        "I struggle with motivation",
+        "I feel worthless or excessively guilty",
+        "I find it difficult to concentrate",
+        "I feel emotionally numb",
+        "I withdraw from social interactions",
+        "I feel like things won’t improve",
+        "I struggle to manage daily routines"
+        ] %}
 
-{% endif %}
+        {% endif %}
 
-<form action="/predict" method="POST">
-<input type="hidden" name="text" value="{{ text }}">
+        <form action="/predict" method="POST">
+            <input type="hidden" name="text" value="{{ text }}">
 
-{% for i in range(questions|length) %}
-<div class="question-box">
+            {% for i in range(questions|length) %}
+            <div class="question-box">
 
-<p><b>Q{{i+1}}:</b> {{ questions[i] }}</p>
+                <p><b>Q{{ i + 1 }}:</b> {{ questions[i] }}</p>
 
-<label><input type="radio" name="q{{i+1}}" value="0" required> Not at all</label><br>
-<label><input type="radio" name="q{{i+1}}" value="1"> Rarely</label><br>
-<label><input type="radio" name="q{{i+1}}" value="2"> Sometimes</label><br>
-<label><input type="radio" name="q{{i+1}}" value="3"> Often</label><br>
-<label><input type="radio" name="q{{i+1}}" value="4"> Almost always</label>
+                <label><input type="radio" name="q{{ i + 1 }}" value="0" required> Not at all</label>
+                <label><input type="radio" name="q{{ i + 1 }}" value="1"> Rarely</label>
+                <label><input type="radio" name="q{{ i + 1 }}" value="2"> Sometimes</label>
+                <label><input type="radio" name="q{{ i + 1 }}" value="3"> Often</label>
+                <label><input type="radio" name="q{{ i + 1 }}" value="4"> Almost always</label>
 
-</div>
-{% endfor %}
+            </div>
+            {% endfor %}
 
-<br>
-<button type="submit">Analyze</button>
+            <button type="submit">Analyze</button>
+        </form>
 
-</form>
-
-</div>
+    </div>
 
 </body>
 </html>

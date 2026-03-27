@@ -81,17 +81,29 @@ body {
 
 .card h2 {
     margin-bottom: 20px;
-    color: #2f3e3a; 
+    color: #0a8a50; 
 }
 
 /* TEXTAREA */
 textarea {
     width: 100%;
     height: 120px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    padding: 10px;
+    border-radius: 12px;
+    border: 1.5px solid #0a8a50;  /* ✅ SAME AS HEADING */
+    padding: 12px;
     resize: none;
+
+    background: white;  /* linen */
+    color: #0a8a50;       /* ✅ SAME TEXT COLOR */
+}
+textarea::placeholder {
+    color: #0a8a50;
+    opacity: 0.6;
+}
+textarea:focus {
+    outline: none;
+    border-color: #0a8a50;
+    box-shadow: 0 0 8px rgba(10, 138, 80, 0.3);
 }
 
 /* BUTTON */

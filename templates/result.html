@@ -1,194 +1,304 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Your Result 💛</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+<head>
+    <title>Your Result</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
-      .result-card {
-        background: #fff7f0;
-        padding: 25px;
-        border-radius: 15px;
-        margin-top: 20px;
-      }
 
-      .bar-container {
-        margin: 20px 0;
-      }
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #CDE4D3;
+        }
 
-      .bar-label {
-        text-align: left;
-        margin-bottom: 5px;
-        font-weight: bold;
-      }
+        /* NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 12px 40px;
+            background: #f2f4f3;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
 
-      .bar-bg {
-        background: #f1f1f1;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 15px;
-      }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-      .bar-fill {
-        height: 25px;
-        line-height: 25px;
-        color: white;
-        padding-right: 10px;
-        text-align: right;
-        border-radius: 10px;
-        min-width: 35px;
-      }
+        .logo {
+            height: 40px;
+        }
 
-      .dep {
-        background: #ff6b6b;
-      }
-      .anx {
-        background: #ffa94d;
-      }
-      .norm {
-        background: #69db7c;
-      }
+        .brand {
+            font-weight: 600;
+            font-size: 20px;
+            color: #1f4037;
+        }
 
-      .section {
-        margin-top: 30px;
-        text-align: left;
-      }
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 100px auto 40px;
+            padding: 20px;
+        }
 
-      .resource {
-        background: #fff7f0;
-        padding: 12px;
-        margin: 10px 0;
-        border-radius: 10px;
-      }
+        /* TITLE */
+        h2 {
+            text-align: center;
+            color: #2f5d50;
+        }
 
-      .resource a {
-        font-weight: bold;
-        color: #d9480f;
-        text-decoration: none;
-      }
+        .intro {
+            text-align: center;
+            color: #4f5f59;
+            margin-bottom: 25px;
+        }
 
-      .intro {
-        color: #6b4f4f;
-      }
+        /* MAIN CARD */
+        .result-card {
+            background: #F3F1E9;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
 
-      .message {
-        margin-top: 15px;
-        color: #5a3e36;
-      }
+        /* BARS */
+        .bar-label {
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #2f5d50;
+        }
 
-      .closing {
-        margin-top: 20px;
-        font-style: italic;
-      }
+        .bar-bg {
+            background: #e6e2d9;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
 
-      .disclaimer {
-        margin-top: 15px;
-        font-size: 13px;
-        color: #888;
-      }
+        .bar-fill {
+            height: 25px;
+            line-height: 25px;
+            color: white;
+            padding-right: 10px;
+            text-align: right;
+            border-radius: 10px;
+            min-width: 35px;
+            font-size: 13px;
+        }
 
-      .result-title {
-        margin-top: 20px;
-        font-size: 24px;
-        font-weight: bold;
-        color: #5a3e36;
-      }
+        .dep {
+            background: #e07a73;
+        }
 
-      .message {
-        margin-top: 10px;
-        font-size: 15px;
-        line-height: 1.6;
-      }
+        .anx {
+            background: #e6a65c;
+        }
+
+        .norm {
+            background: #7fbfa5;
+        }
+
+        /* RESULT TEXT */
+        .result-title {
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #2f5d50;
+            text-align: center;
+        }
+
+        .message {
+            margin-top: 10px;
+            font-size: 15px;
+            line-height: 1.6;
+            text-align: center;
+            color: #4f5f59;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* RISK CARD */
+        .risk-card {
+            background: #F3F1E9;
+            padding: 20px 40px;
+            width: 260px;
+            height: auto;
+            margin: 40px auto;
+            border-radius: 12px;
+            border: 1.5px solid #9fcbb3;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.04);
+            text-align: center;
+        }
+
+        .risk-card h3 {
+            margin-bottom: 8px;
+            color: #2f5d50;
+        }
+
+        .risk-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2f5d50;
+        }
+
+        /* BUTTON */
+        button {
+            display: block;
+            margin: 25px auto;
+            padding: 14px 35px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, #9fcbb3, #7fbfa5);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #88bfa5, #6fae92);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* SUPPORT */
+        .support-card {
+            background: #F3F1E9;
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+
+        .resource {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+        }
+
+        .resource a {
+            color: #7fbfa5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .closing {
+            margin-top: 20px;
+            font-style: italic;
+            color: #4f5f59;
+            text-align: center;
+        }
+
+        .disclaimer {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #7a8f86;
+            text-align: center;
+        }
+
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="nav-left">
+            <img src="/static/logo.png" class="logo">
+            <span class="brand">MindWatch</span>
+        </div>
+    </div>
+
     <div class="container">
-      <h2>💛 You’re not alone</h2>
 
-      <p class="intro">
-        Taking a moment to understand how you feel is not easy — and the fact
-        that you're here shows strength.
-      </p>
+        <h2>You’re not alone</h2>
 
-      <div class="result-card">
-        <!-- GRAPH -->
-        <div class="bar-container">
-          <div class="bar-label">Depression</div>
-          <div class="bar-bg">
-            <div class="bar-fill dep" style="width: {{ dep_ui }}%">
-              {{ depression }}%
+        <p class="intro">
+            Taking a moment to understand how you feel is not easy — and the fact
+            that you're here shows strength.
+        </p>
+
+        <div class="result-card">
+
+            <!-- BARS -->
+            <div class="bar-label">Depression</div>
+            <div class="bar-bg">
+                <div class="bar-fill dep" style="width: {{ dep_ui }}%">
+                    {{ depression }}%
+                </div>
             </div>
-          </div>
 
-          <div class="bar-label">Anxiety</div>
-          <div class="bar-bg">
-            <div class="bar-fill anx" style="width: {{ anx_ui }}%">
-              {{ anxiety }}%
+            <div class="bar-label">Anxiety</div>
+            <div class="bar-bg">
+                <div class="bar-fill anx" style="width: {{ anx_ui }}%">
+                    {{ anxiety }}%
+                </div>
             </div>
-          </div>
 
-          <div class="bar-label">Normal</div>
-          <div class="bar-bg">
-            <div class="bar-fill norm" style="width: {{ norm_ui }}%">
-              {{ normal }}%
+            <div class="bar-label">Normal</div>
+            <div class="bar-bg">
+                <div class="bar-fill norm" style="width: {{ norm_ui }}%">
+                    {{ normal }}%
+                </div>
             </div>
-          </div>
+
+            <h2 class="result-title">{{ final }}</h2>
+            <p class="message">{{ message }}</p>
+
         </div>
 
-        <!-- RESULT (IMPORTANT: ABOVE MESSAGE) -->
-        <h2 class="result-title">{{ final }}</h2>
+        <!-- RISK -->
+        <div class="risk-card">
+            <h3>Risk Level</h3>
+            <p class="risk-value">{{ risk }}</p>
+        </div>
 
-        <!-- MESSAGE -->
-        <p class="message">{{ message }}</p>
-      </div>
+        <!-- DOWNLOAD -->
+        <a href="/download">
+            <button>Download Report</button>
+        </a>
 
-      <!-- RISK -->
-      <div class="section" style="text-align: center">
-        <h3>Risk Level</h3>
-        <p style="font-weight: bold; font-size: 18px">{{ risk }}</p>
-      </div>
-
-      <!-- DOWNLOAD -->
-      <a href="/download">
-        <button>Download Report</button>
-      </a>
-
-      <!-- SUPPORT -->
-      <div class="section support-section">
-        <h2 class="support-title">🌐 {{ support_title }}</h2>
-
+        <!-- SUPPORT -->
         <div class="support-card">
-          {% for s in support %}
-          <div class="resource">
-            <h4>{{ s.name }}</h4>
-            <p class="support-desc">{{ s.desc }}</p>
-            <a href="{{ s.link }}" target="_blank">Visit →</a>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
+            <h2>{{ support_title }}</h2>
 
-      <!-- CLOSING -->
-      <div class="section">
+            {% for s in support %}
+            <div class="resource">
+                <h4>{{ s.name }}</h4>
+                <p>{{ s.desc }}</p>
+                <a href="{{ s.link }}" target="_blank">Visit</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- CLOSING -->
         <p class="closing">
-          You don’t have to go through everything on your own. Reaching out is a
-          sign of strength, not weakness.
+            You don’t have to go through everything on your own. Reaching out is a
+            sign of strength, not weakness.
         </p>
 
         <p class="disclaimer">
-          ⚠️ This tool is not a medical diagnosis. It is meant to help you
-          reflect on your emotional state. For proper care, please consult a
-          qualified mental health professional.
+            ⚠️This tool is not a medical diagnosis. It is meant to help you reflect
+            on your emotional state. For proper care, consult a qualified professional.
         </p>
-      </div>
 
-      <br />
+        <a href="/">
+            <button>Go Back</button>
+        </a>
 
-      <a href="/"><button>Go Back</button></a>
     </div>
-  </body>
+
+</body>
 </html>
