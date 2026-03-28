@@ -250,8 +250,15 @@
 
                     <input type="email" name="email" placeholder="Email Address" required>
 
-                    <input type="number" name="age" placeholder="Age" required>
-
+                     <input 
+                        type="number" 
+                        name="age" 
+                        min="1" 
+                        max="120" 
+                        required 
+                        placeholder="Enter your age"
+                        oninvalid="this.setCustomValidity('Please enter a valid age')"
+                        oninput="this.setCustomValidity('')">
                     <input type="text" name="place" placeholder="Your Place" required>
 
                     <button type="submit">Start Your Journey</button>

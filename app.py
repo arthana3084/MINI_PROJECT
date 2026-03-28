@@ -186,12 +186,28 @@ def home():
 
 @app.route("/text", methods=["POST"])
 def text():
+    name = request.form.get("name")
+    age = request.form.get("age")
+    email = request.form.get("email")
+    place = request.form.get("place")
+
+    # ✅ AGE VALIDATION
+    try:
+        age = int(age)
+        if age <= 0 or age > 120:
+            return "Invalid age. Please enter a valid age between 1 and 120."
+    except:
+        return "Invalid input for age."
+
+    # store only if valid
     session['user_info'] = {
-        "name": request.form.get("name"),
-        "age": request.form.get("age"),
-        "email": request.form.get("email"),
-        "place": request.form.get("place")
+        "name": name,
+        "age": age,
+        "email": email,
+        "place": place
     }
+
+    return render_template("choice.html")
     return render_template("choice.html")
 
 @app.route("/text_input")
@@ -499,7 +515,8 @@ def download():
     content.append(Paragraph("<b>Detailed Questionnaire Responses</b>", styles["Heading2"]))
     content.append(Spacer(1, 10))
 
-    for key, val in res['responses'].items():
+    for key in sorted(res['responses'], key=lambda x: int(x[1:])):
+        val = res['responses'][key]
         if isinstance(val, dict):
             content.append(Paragraph(f"<b>{key}:</b> {val['question']}", styles["Normal"]))
             content.append(Paragraph(f"Response: {val['answer']}", styles["Normal"]))
@@ -509,7 +526,7 @@ def download():
 
     content.append(Spacer(1, 20))
     content.append(Paragraph(
-        "<i>This report is for screening purposes only and not a clinical diagnosis.</i>",
+        "<i>⚠️This report is for screening purposes only and not a clinical diagnosis.</i>",
         styles["Normal"]
     ))
 

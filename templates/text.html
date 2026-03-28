@@ -107,8 +107,11 @@ textarea {
     transition: box-shadow 0.2s;
 }
 textarea::placeholder {
-    color: #0a8a50;
-    opacity: 0.55;
+  color: rgba(47, 93, 80, 0.5); /* faded green */
+  transition: opacity 0.3s ease;
+}
+textarea:focus::placeholder {
+  opacity: 0.2;
 }
 textarea:focus {
     outline: none;
