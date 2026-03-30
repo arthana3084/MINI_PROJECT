@@ -106,15 +106,13 @@ def overall_assessment(dep, anx):
     else:
         return "Minimal / No Significant Concern"
 
-def level_to_percent(level):
-    mapping = {
-        "Minimal": 15,
-        "Mild": 35,
-        "Moderate": 60,
-        "Moderately Severe": 80,
-        "Severe": 100
-    }
-    return mapping.get(level, 15)
+def score_to_bar_percent(score, num_questions):
+    """Linear 0-100 bar width: raw sum as percent of maximum (num_questions × 4)."""
+    max_possible = num_questions * 4
+    if max_possible <= 0:
+        return 0
+    pct = (score / max_possible) * 100
+    return int(round(min(100.0, max(0.0, pct))))
 
 # ---------- ML PREDICTION ----------
 def predict_category(text):
@@ -295,21 +293,20 @@ def predict():
     else:
         risk = overall_assessment(dep_level, anx_level)
 
-    # ---------- WELL-BEING (only meaningful for general) ----------
-    if category == "general" and pos_score > 0:
-        # pos_score: higher = more positive feelings (0-40 range for 10 questions × 4)
-        wellbeing_percent = int((pos_score / 40) * 100)
-        norm_ui = max(10, wellbeing_percent)
+    # ---------- WELL-BEING & BAR WIDTHS (continuous % of scale, not label buckets) ----------
+    n_dep = len(DEPRESSION_QUESTIONS)
+    n_anx = len(ANXIETY_QUESTIONS)
+    dep_ui = score_to_bar_percent(dep_score, n_dep) if dep_level != "N/A" else 0
+    anx_ui = score_to_bar_percent(anx_score, n_anx) if anx_level != "N/A" else 0
+
+    if category == "general":
+        norm_ui = score_to_bar_percent(pos_score, len(GENERAL_POSITIVE_QUESTIONS))
     elif category == "anxiety":
-        # Invert anxiety score as proxy for well-being
-        norm_ui = max(10, 100 - level_to_percent(anx_level))
+        norm_ui = max(0, 100 - anx_ui)
     elif category == "depression":
-        norm_ui = max(10, 100 - level_to_percent(dep_level))
+        norm_ui = max(0, 100 - dep_ui)
     else:
         norm_ui = 50
-
-    dep_ui = level_to_percent(dep_level) if dep_level != "N/A" else 0
-    anx_ui = level_to_percent(anx_level) if anx_level != "N/A" else 0
 
     # ---------- MESSAGES ----------
     anx_display = anx_level if anx_level != "N/A" else "Not assessed"
