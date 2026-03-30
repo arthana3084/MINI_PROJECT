@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create account – MindWatch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; font-family: 'Poppins', sans-serif; background: #CDE4D3; min-height: 100vh; }
+    .wrap { max-width: 420px; margin: 0 auto; padding: 100px 24px 48px; }
+    .card {
+      background: #f3f1e9;
+      padding: 36px 32px;
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    h1 { font-size: 22px; color: #2f5d50; margin: 0 0 8px; text-align: center; }
+    p.sub { color: #6b7d75; font-size: 14px; text-align: center; margin: 0 0 24px; }
+    label { display: block; font-size: 13px; color: #2f5d50; margin-bottom: 6px; }
+    input[type="text"], input[type="password"] {
+      width: 100%; box-sizing: border-box;
+      padding: 12px 14px; margin-bottom: 16px;
+      border-radius: 12px; border: 1px solid #ddd;
+      font-size: 14px; font-family: inherit;
+      background: #fff;
+    }
+    input:focus { outline: none; border-color: #9fcbb3; }
+    .err { background: #fde8e8; color: #a12; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; }
+    button[type="submit"] {
+      width: 100%; padding: 14px; border: none; border-radius: 30px;
+      background: linear-gradient(135deg, #9fcbb3, #7fbfa5);
+      color: #1f4037; font-weight: 600; font-size: 15px; cursor: pointer;
+      font-family: inherit;
+    }
+    button[type="submit"]:hover { filter: brightness(0.97); }
+    .foot { text-align: center; margin-top: 20px; font-size: 14px; color: #6b7d75; }
+    .foot a { color: #2f5d50; font-weight: 600; }
+  </style>
+</head>
+<body>
+  {% include 'partials/nav.html' %}
+  <div class="wrap">
+    <div class="card">
+      <h1>Create account</h1>
+      <p class="sub">Stored locally on the server in this demo (data/users.json). Use a unique username and a strong password.</p>
+      {% if error %}<div class="err">{{ error }}</div>{% endif %}
+      <form method="post" action="{{ url_for('register') }}">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="32"
+               pattern="[a-zA-Z0-9_]{3,32}" title="Letters, numbers, underscore only">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" required minlength="6">
+        <button type="submit">Register</button>
+      </form>
+      <p class="foot">Already have an account? <a href="{{ url_for('signin') }}">Sign in</a></p>
+    </div>
+  </div>
+</body>
+</html>

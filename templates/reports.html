@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Past reports – MindWatch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; font-family: 'Poppins', sans-serif; background: #CDE4D3; min-height: 100vh; }
+    .page { max-width: 720px; margin: 0 auto; padding: 100px 24px 60px; }
+    h1 { font-size: 24px; color: #2f5d50; margin: 0 0 8px; }
+    .lead { color: #6b7d75; font-size: 14px; margin-bottom: 28px; }
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    .row {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      background: #f3f1e9; padding: 18px 20px; border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      text-decoration: none; color: inherit;
+      transition: transform 0.15s ease;
+    }
+    a.row:hover { transform: translateY(-2px); }
+    .row-meta { font-size: 13px; color: #6b7d75; }
+    .row-title { font-weight: 600; color: #1f4037; margin-bottom: 4px; }
+    .row-risk { font-size: 14px; color: #4f5f59; }
+    .empty { background: #f3f1e9; padding: 40px; border-radius: 16px; text-align: center; color: #6b7d75; }
+    .empty a { color: #2f5d50; font-weight: 600; }
+  </style>
+</head>
+<body>
+  {% include 'partials/nav.html' %}
+  <div class="page">
+    <h1>Your past reports</h1>
+    <p class="lead">Open any assessment to see full results or download the PDF.</p>
+    {% if reports %}
+    <div class="list">
+      {% for r in reports %}
+      <a class="row" href="{{ url_for('report_view', report_id=r.id) }}">
+        <div>
+          <div class="row-title">{{ (r.ts or '')[:19] | replace('T', ' ') }} UTC</div>
+          <div class="row-meta">Category: {{ r.category }} · Depression: {{ r.dep_level }} · Anxiety: {{ r.anx_level }}</div>
+          <div class="row-risk">Overall: {{ r.risk }}</div>
+        </div>
+        <span style="color:#7fbfa5;font-weight:600;">View →</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty">
+      No saved reports yet. Complete an assessment while signed in to build your history.
+      <br><br>
+      <a href="{{ url_for('home') }}">Go to home</a>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

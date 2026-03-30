@@ -1,0 +1,98 @@
+<style>
+  .mw-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 40px;
+    background: #f2f4f3;
+    z-index: 1000;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .mw-navbar a.mw-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 20px;
+    color: #1f4037;
+    text-decoration: none;
+  }
+  .mw-navbar a.mw-brand img { height: 45px; width: auto; object-fit: contain; }
+  .mw-nav-spacer { flex: 1; min-width: 8px; }
+  .mw-category-badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .mw-badge-anxiety { background: #fff3cd; color: #856404; }
+  .mw-badge-depression { background: #d1ecf1; color: #0c5460; }
+  .mw-badge-general { background: #d4edda; color: #155724; }
+  .mw-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .mw-nav-right a {
+    color: #2f5d50;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .mw-nav-right a:hover { text-decoration: underline; color: #1f4037; }
+  .mw-profile {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f4037;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mw-nav-right form { margin: 0; display: inline; }
+  .mw-nav-right button.mw-signout {
+    background: transparent;
+    border: 1px solid #9fcbb3;
+    color: #2f5d50;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+  }
+  .mw-nav-right button.mw-signout:hover { background: #e8f5ef; }
+</style>
+<nav class="mw-navbar">
+  <a class="mw-brand" href="{{ url_for('home') }}">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="">
+    MindWatch
+  </a>
+  <div class="mw-nav-spacer"></div>
+  {% if nav_show_category | default(false) %}
+    {% if category == "anxiety" %}
+      <span class="mw-category-badge mw-badge-anxiety">🧠 Anxiety Assessment</span>
+    {% elif category == "depression" %}
+      <span class="mw-category-badge mw-badge-depression">🌧️ Depression Assessment</span>
+    {% else %}
+      <span class="mw-category-badge mw-badge-general">🌿 General Wellness Check</span>
+    {% endif %}
+  {% endif %}
+  <div class="mw-nav-right">
+    {% if current_user %}
+      <a href="{{ url_for('reports_list') }}">Past reports</a>
+      <span class="mw-profile" title="{{ current_user }}">{{ current_user }}</span>
+      <a href="{{ url_for('signout') }}">Sign out</a>
+    {% else %}
+      <a href="{{ url_for('signin') }}">Sign in</a>
+      <a href="{{ url_for('register') }}">Create account</a>
+    {% endif %}
+  </div>
+</nav>
