@@ -12,30 +12,6 @@
             background: #F3F1E9;
         }
 
-        /* NAVBAR */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            padding: 12px 40px;
-            background: #f2f4f3;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            font-size: 20px;
-            color: #1f4037;
-        }
-
-        .logo img {
-            height: 45px;
-        }
-
         /* MAIN SECTION */
         .container {
             margin-top: 90px;
@@ -121,13 +97,7 @@
 
 <body>
 
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo.png') }}">
-            MindWatch
-        </div>
-    </div>
+    {% include 'partials/nav.html' %}
 
     <!-- MAIN -->
     <div class="container">

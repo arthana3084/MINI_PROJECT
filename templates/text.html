@@ -12,40 +12,11 @@ body {
     background: #CDE4D3;
 }
 
-/* NAVBAR */
-.navbar {
-    position: fixed;
-    height: 70px;
-    top: 0; left: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 12px 40px;
-    background: #f2f4f3;
-    box-sizing: border-box;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
-.nav-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.logo {
-    height: 40px;
-    width: auto;
-    object-fit: contain;
-}
-.brand {
-    font-weight: 600;
-    font-size: 20px;
-    color: #1f4037;
-}
-
 /* LAYOUT */
 .container {
     display: flex;
-    height: 100vh;
+    height: calc(100vh - 70px);
+    margin-top: 70px;
 }
 
 .left {
@@ -174,14 +145,9 @@ button:disabled {
 
 <body>
 
-<div class="container">
-    <header class="navbar">
-        <div class="nav-left">
-            <img src="/static/logo.png" class="logo" alt="MindWatch Logo">
-            <span class="brand">MindWatch</span>
-        </div>
-    </header>
+{% include 'partials/nav.html' %}
 
+<div class="container">
     <!-- LEFT -->
     <div class="left"></div>
 

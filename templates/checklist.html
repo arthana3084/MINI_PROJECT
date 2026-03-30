@@ -12,41 +12,6 @@
             background: #CDE4D3;
         }
 
-        /* NAVBAR */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            padding: 12px 40px;
-            background: #f2f4f3;
-            z-index: 1000;
-            box-sizing: border-box;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            font-size: 20px;
-            color: #1f4037;
-        }
-        .logo img { height: 45px; }
-
-        /* CATEGORY BADGE */
-        .category-badge {
-            margin-left: auto;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .badge-anxiety  { background: #fff3cd; color: #856404; }
-        .badge-depression { background: #d1ecf1; color: #0c5460; }
-        .badge-general  { background: #d4edda; color: #155724; }
-
         /* CONTAINER */
         .container {
             margin-top: 90px;
@@ -195,20 +160,7 @@
 
 <body>
 
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <div class="logo">
-            <img src="/static/logo.png" alt="logo">
-            MindWatch
-        </div>
-        {% if category == "anxiety" %}
-            <span class="category-badge badge-anxiety">🧠 Anxiety Assessment</span>
-        {% elif category == "depression" %}
-            <span class="category-badge badge-depression">🌧️ Depression Assessment</span>
-        {% else %}
-            <span class="category-badge badge-general">🌿 General Wellness Check</span>
-        {% endif %}
-    </div>
+    {% include 'partials/nav.html' %}
 
     <div class="container">
 
@@ -296,7 +248,7 @@
         </div>
 
         <!-- FORM -->
-        <form action="/predict" method="POST" id="assessForm" onsubmit="return validateForm()">
+        <form action="/predict" method="POST" id="assessForm" onsubmit="if(!validateForm()) return false; try{ sessionStorage.setItem('mw_result_pending','1'); } catch(e) {} return true;">
             <!-- Pass category so /predict knows which scoring logic to use -->
             <input type="hidden" name="category" value="{{ category }}">
             <input type="hidden" name="text" value="{{ text }}">

@@ -12,39 +12,6 @@
             overflow: hidden;  
         }
 
-        /* NAVBAR (REDUCED HEIGHT) */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            
-            display: flex;
-            align-items: center;
-            padding: 12px 40px;
-
-            background: #f2f4f3;
-
-            z-index: 1000;
-        }
-
-        /* LOGO TEXT */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            font-size: 20px;
-            color: #1f4037;
-        }
-
-        /* LOGO IMAGE */
-        .logo img {
-            height: 48px;
-            width: 48px;
-            object-fit: contain;
-        }
-
         /* HERO FULL SCREEN */
         .hero {
             height: 100vh;
@@ -220,13 +187,7 @@
 
 <body>
 
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo">
-            MindWatch
-        </div>
-    </div>
+    {% include 'partials/nav.html' %}
 
     <!-- HERO -->
     <div class="hero">

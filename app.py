@@ -1,6 +1,21 @@
+import json
 import os
 import pickle
-from flask import Flask, render_template, request, send_file, session
+import re
+import uuid
+from datetime import datetime, timezone
+
+from flask import (
+    Flask,
+    abort,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    session,
+    url_for,
+)
+from werkzeug.security import check_password_hash, generate_password_hash
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
@@ -9,8 +24,64 @@ from reportlab.lib.units import inch
 app = Flask(__name__)
 app.secret_key = "mental_health_secure_key"
 
+
+@app.context_processor
+def inject_user():
+    return {"current_user": session.get("username")}
+
 REPORT_FOLDER = "reports"
 os.makedirs(REPORT_FOLDER, exist_ok=True)
+
+DATA_DIR = "data"
+USER_STORE = os.path.join(DATA_DIR, "users.json")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+
+def _load_user_store():
+    if not os.path.isfile(USER_STORE):
+        return {"users": {}}
+    try:
+        with open(USER_STORE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {"users": {}}
+
+
+def _save_user_store(store):
+    with open(USER_STORE, "w", encoding="utf-8") as f:
+        json.dump(store, f, indent=2, ensure_ascii=False)
+
+
+def _append_user_report(username, result_dict):
+    """Persist a completed assessment for a signed-in user (server-side history)."""
+    store = _load_user_store()
+    users = store.setdefault("users", {})
+    user = users.get(username)
+    if not user:
+        return None
+    rec = dict(result_dict)
+    rec["id"] = str(uuid.uuid4())
+    rec["ts"] = datetime.now(timezone.utc).isoformat()
+    user.setdefault("reports", []).append(rec)
+    _save_user_store(store)
+    return rec["id"]
+
+
+def _get_user_report(username, report_id):
+    store = _load_user_store()
+    user = store.get("users", {}).get(username)
+    if not user:
+        return None
+    for r in user.get("reports", []):
+        if r.get("id") == report_id:
+            return r
+    return None
+
+
+def _report_for_session(stored):
+    """Strip server metadata for PDF / display via session."""
+    out = {k: v for k, v in stored.items() if k not in ("id", "ts")}
+    return out
 
 # ---------- LOAD ML MODEL ----------
 try:
@@ -206,7 +277,12 @@ def text():
     }
 
     return render_template("choice.html")
+
+
+@app.route("/choice")
+def choice():
     return render_template("choice.html")
+
 
 @app.route("/text_input")
 def text_input():
@@ -215,7 +291,7 @@ def text_input():
 @app.route("/checklist_general")
 def checklist_general():
     # Direct general checklist (no text analysis)
-    return render_template("checklist.html", category="general", text="")
+    return render_template("checklist.html", category="general", text="", nav_show_category=True)
 
 # ---------- ANALYZE TEXT → ROUTE TO CORRECT CHECKLIST ----------
 @app.route("/analyze_text", methods=["POST"])
@@ -225,7 +301,7 @@ def analyze_text():
     # Store the input text and detected category in session
     session['user_text'] = user_text
     session['detected_category'] = category
-    return render_template("checklist.html", category=category, text=user_text)
+    return render_template("checklist.html", category=category, text=user_text, nav_show_category=True)
 
 # ---------- PREDICT (SCORE + CLASSIFY) ----------
 @app.route("/predict", methods=["POST"])
@@ -367,8 +443,8 @@ def predict():
             {"name": "Wysa", "link": "https://www.wysa.com", "desc": "Mood check-in and support"}
         ]
 
-    # ---------- SAVE TO SESSION ----------
-    session['latest_result'] = {
+    # ---------- SAVE TO SESSION (+ optional server-side copy for signed-in users) ----------
+    snapshot = {
         "category": category,
         "dep_level": dep_level,
         "anx_level": anx_level,
@@ -376,7 +452,26 @@ def predict():
         "responses": responses,
         "dep_ui": dep_ui,
         "anx_ui": anx_ui,
-        "norm_ui": norm_ui
+        "norm_ui": norm_ui,
+        "message_html": message,
+        "anxiety_support": anxiety_support,
+        "depression_support": depression_support,
+        "general_support": general_support,
+    }
+    session["latest_result"] = snapshot
+
+    uname = session.get("username")
+    if uname:
+        _append_user_report(uname, snapshot)
+
+    result_payload = {
+        "category": category,
+        "dep_level": dep_level,
+        "anx_level": anx_level,
+        "risk": risk,
+        "dep_ui": dep_ui,
+        "anx_ui": anx_ui,
+        "norm_ui": norm_ui,
     }
 
     return render_template(
@@ -391,8 +486,113 @@ def predict():
         message=message,
         anxiety_support=anxiety_support,
         depression_support=depression_support,
-        general_support=general_support
+        general_support=general_support,
+        result_payload=result_payload,
+        from_saved=False,
+        saved_label="",
     )
+
+
+def _valid_username(username):
+    return bool(username and re.match(r"^[a-zA-Z0-9_]{3,32}$", username))
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    err = None
+    if request.method == "POST":
+        username = (request.form.get("username") or "").strip()
+        password = request.form.get("password") or ""
+        if not _valid_username(username):
+            err = "Username must be 3–32 characters (letters, numbers, underscore)."
+        elif len(password) < 6:
+            err = "Password must be at least 6 characters."
+        else:
+            store = _load_user_store()
+            users = store.setdefault("users", {})
+            if username in users:
+                err = "That username is already taken."
+            else:
+                users[username] = {
+                    "password_hash": generate_password_hash(password),
+                    "reports": [],
+                }
+                _save_user_store(store)
+                session["username"] = username
+                return redirect(url_for("home"))
+    return render_template("register.html", error=err)
+
+
+@app.route("/signin", methods=["GET", "POST"])
+def signin():
+    err = None
+    if request.method == "POST":
+        username = (request.form.get("username") or "").strip()
+        password = request.form.get("password") or ""
+        next_url = (request.form.get("next") or request.args.get("next") or "").strip() or url_for("home")
+        store = _load_user_store()
+        user = store.get("users", {}).get(username)
+        if user and check_password_hash(user.get("password_hash", ""), password):
+            session["username"] = username
+            if not (next_url.startswith("/") and not next_url.startswith("//")):
+                next_url = url_for("home")
+            return redirect(next_url)
+        err = "Invalid username or password."
+    return render_template("signin.html", error=err)
+
+
+@app.route("/signout")
+def signout():
+    session.pop("username", None)
+    return redirect(url_for("home"))
+
+
+@app.route("/reports")
+def reports_list():
+    uname = session.get("username")
+    if not uname:
+        return redirect(url_for("signin", next=request.path))
+    store = _load_user_store()
+    user = store.get("users", {}).get(uname, {})
+    rows = list(reversed(user.get("reports", [])))
+    return render_template("reports.html", reports=rows)
+
+
+@app.route("/reports/<report_id>")
+def report_view(report_id):
+    uname = session.get("username")
+    if not uname:
+        return redirect(url_for("signin", next=request.path))
+    r = _get_user_report(uname, report_id)
+    if not r:
+        abort(404)
+    session["latest_result"] = _report_for_session(r)
+    return render_template(
+        "result.html",
+        category=r["category"],
+        dep_ui=r["dep_ui"],
+        anx_ui=r["anx_ui"],
+        norm_ui=r["norm_ui"],
+        dep_level=r["dep_level"],
+        anx_level=r["anx_level"],
+        risk=r["risk"],
+        message=r.get("message_html", ""),
+        anxiety_support=r.get("anxiety_support") or [],
+        depression_support=r.get("depression_support") or [],
+        general_support=r.get("general_support") or [],
+        result_payload={
+            "category": r["category"],
+            "dep_level": r["dep_level"],
+            "anx_level": r["anx_level"],
+            "risk": r["risk"],
+            "dep_ui": r["dep_ui"],
+            "anx_ui": r["anx_ui"],
+            "norm_ui": r["norm_ui"],
+        },
+        from_saved=True,
+        saved_label=r.get("ts", ""),
+    )
+
 
 # ---------- PDF DOWNLOAD ----------
 @app.route("/download")

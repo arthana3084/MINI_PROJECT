@@ -12,26 +12,6 @@
       background: #cde4d3;
     }
 
-    /* NAVBAR */
-    .navbar {
-      position: fixed;
-      top: 0; width: 100%;
-      padding: 12px 40px;
-      background: #f2f4f3;
-      display: flex;
-      align-items: center;
-      z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      box-sizing: border-box;
-    }
-    .logo { height: 40px; }
-    .brand {
-      font-weight: 600;
-      font-size: 20px;
-      color: #1f4037;
-      margin-left: 10px;
-    }
-
     /* CONTAINER */
     .container {
       max-width: 860px;
@@ -203,19 +183,78 @@
       transition: background 0.2s;
     }
     .resource a:hover { background: #4f8f74; }
+
+    .saved-banner {
+      background: #e8f4ef;
+      border: 1px solid #9fcbb3;
+      color: #1f4037;
+      padding: 12px 18px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      text-align: center;
+    }
+    .compare-card {
+      background: white;
+      padding: 18px 20px;
+      border-radius: 14px;
+      margin-bottom: 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .compare-card h4 { margin: 0 0 12px; color: #2f5d50; font-size: 15px; text-align: center; }
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; }
+    .compare-grid div { background: #f9faf9; padding: 10px 12px; border-radius: 10px; }
+    .compare-grid strong { display: block; color: #6b7d75; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; }
+    .retake-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 20px 0 8px;
+    }
+    .retake-row a, .retake-row button {
+      padding: 11px 22px;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+    }
+    .retake-row a.primary {
+      background: linear-gradient(135deg, #7fbfa5, #4f8f74);
+      color: white;
+    }
+    .retake-row a.secondary {
+      background: white;
+      color: #2f5d50;
+      border: 2px solid #9fcbb3;
+    }
+    .retake-row button.ghost {
+      background: transparent;
+      color: #6b7d75;
+      border: 1px dashed #bbb;
+    }
+    .session-note { font-size: 12px; color: #6b7d75; text-align: center; margin-top: 8px; }
   </style>
 </head>
 
 <body>
-  <!-- NAVBAR -->
-  <div class="navbar">
-    <img src="/static/logo.png" class="logo" alt="logo">
-    <span class="brand">MindWatch</span>
-  </div>
+  {% include 'partials/nav.html' %}
 
   <div class="container">
+    {% if from_saved and saved_label %}
+    <div class="saved-banner">📂 Viewing a saved report ({{ saved_label[:19] | replace('T', ' ') }} UTC). <a href="{{ url_for('reports_list') }}">Back to list</a></div>
+    {% endif %}
+
     <div class="result-card">
       <h3>📊 Your Assessment Results</h3>
+
+      <div id="compare-section" class="compare-card" style="display:none;">
+        <h4>Before · After (this browser)</h4>
+        <div class="compare-grid" id="compare-grid"></div>
+      </div>
 
       <!-- BARS (only show bars that were assessed) -->
       <div class="bars">
@@ -286,6 +325,17 @@
       <div class="message">{{ message | safe }}</div>
     </div>
 
+    <div class="retake-row">
+      <a class="primary" href="{{ url_for('choice') }}">↻ Retake assessment</a>
+      <a class="secondary" href="{{ url_for('home') }}">Home</a>
+      {% if not from_saved %}
+      <button type="button" class="ghost" id="clearHistoryBtn">Clear session history</button>
+      {% endif %}
+    </div>
+    {% if not from_saved %}
+    <p class="session-note">Last assessments are saved in this browser (localStorage) for before/after. Signing in also saves reports on the server.</p>
+    {% endif %}
+
     <!-- DOWNLOAD -->
     <a href="/download" class="download-btn">⬇️ Download PDF Report</a>
 
@@ -334,7 +384,6 @@
     </div>
   </div>
 
-  <!-- Animate bars on load -->
   <script>
     window.addEventListener('load', () => {
       document.querySelectorAll('.bar-fill').forEach(bar => {
@@ -343,5 +392,65 @@
       });
     });
   </script>
+  {% if not from_saved %}
+  <script type="application/json" id="result-payload">{{ result_payload | tojson }}</script>
+  <script>
+  (function () {
+    var KEY = 'mindwatch_assessment_history_v1';
+    var MAX = 12;
+    var el = document.getElementById('result-payload');
+    if (!el) return;
+    var current;
+    try { current = JSON.parse(el.textContent); } catch (e) { return; }
+    var raw = localStorage.getItem(KEY);
+    var store = { entries: [] };
+    if (raw) {
+      try { store = JSON.parse(raw); if (!store.entries) store.entries = []; } catch (e) {}
+    }
+    var pending = false;
+    try { pending = sessionStorage.getItem('mw_result_pending') === '1'; } catch (e) {}
+    if (pending) {
+      try { sessionStorage.removeItem('mw_result_pending'); } catch (e) {}
+    }
+
+    var prev = null;
+    if (pending) {
+      prev = store.entries.length ? store.entries[0] : null;
+      var entry = Object.assign({}, current, { ts: new Date().toISOString() });
+      store.entries.unshift(entry);
+      if (store.entries.length > MAX) store.entries = store.entries.slice(0, MAX);
+      localStorage.setItem(KEY, JSON.stringify(store));
+    }
+
+    if (prev) {
+      var sec = document.getElementById('compare-section');
+      var grid = document.getElementById('compare-grid');
+      if (sec && grid) {
+        function row(label, a, b) {
+          return '<div><strong>' + label + '</strong><span style="color:#6b7d75">Earlier</span><br>' + (a || '—') + '</div>' +
+            '<div><strong>&nbsp;</strong><span style="color:#2f5d50">This result</span><br>' + (b || '—') + '</div>';
+        }
+        grid.innerHTML =
+          row('Overall risk', prev.risk, current.risk) +
+          row('Depression', prev.dep_level, current.dep_level) +
+          row('Anxiety', prev.anx_level, current.anx_level) +
+          row('Category', prev.category, current.category);
+        sec.style.display = 'block';
+      }
+    }
+
+    var clearBtn = document.getElementById('clearHistoryBtn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        if (confirm('Clear all saved assessments in this browser?')) {
+          localStorage.removeItem(KEY);
+          var csec = document.getElementById('compare-section');
+          if (csec) csec.style.display = 'none';
+        }
+      });
+    }
+  })();
+  </script>
+  {% endif %}
 </body>
 </html>
