@@ -27,16 +27,16 @@ body {
     align-items: center;
 }
 
-/* 🌟 MINDWATCH TITLE */
 #typing-text {
-    font-family: 'Playfair Display', serif;  /* 👈 premium font */
+    font-family: 'Playfair Display', serif;
     font-size: 100px;
     font-weight: 700;
     letter-spacing: 6px;
 
     color: #F3F1E9;
-
     text-shadow: 0px 6px 20px rgba(0,0,0,0.2);
+
+    margin: 0;              /* 👈 REMOVE DEFAULT GAP */
 }
 
 /* ✨ DESCRIPTION */
@@ -162,6 +162,88 @@ body {
     display: block;
     margin: 40px auto;
 }
+/* TITLE + LOGO */
+.title-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+
+
+.tagline {
+    margin-top: 4px;        /* 👈 reduce gap */
+    margin-bottom: 10px;
+
+    font-size: 16px;
+    color: #1f5c4d;
+
+    text-align: center;
+}
+
+
+/* LOGO */
+.logo {
+    width: 110px;
+    height: auto;
+
+    margin-bottom: 4px;   /* 👈 KEY: brings logo closer to title */
+
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+}
+.title {
+    margin: 0;        /* reduces both top & bottom gap */
+    font-size: 100px;      /* optional if you want stronger impact */
+}
+.tagline, .subtext {
+    opacity: 0;
+    transition: opacity 1.2s ease;
+}
+
+/* TAGLINE */
+.tagline {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+.tagline {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 1s ease;
+}
+.tagline span {
+    color: #1f5c4d;   /* slightly darker green */
+    font-weight: 600;
+}
+/* SUBTEXT CONTAINER */
+.subtext {
+    margin-top: 150px;
+    text-align: center;   /* ✅ this is what you need */
+    opacity: 0;
+}
+.subtext p {
+    margin: 0;          /* remove default space */
+    line-height: 1.2;   /* tighter spacing */
+}
+.subtext p:first-child {
+    font-size: 26px;   /* "You're not alone" */
+    font-weight: 500;
+    color: #1f5c4d;
+    margin-bottom: 6px; 
+}
+
+.subtext p:last-child {
+    font-size: 26px;   /* second line smaller */
+    color: #1f5c4d;
+    margin-bottom: 6px; 
+}
+
+/* FADE ANIMATION */
+.fade-in {
+    transition: opacity 1.2s ease, transform 1.2s ease;
+}
 
 </style>
 
@@ -175,45 +257,48 @@ body {
 <!-- ✍️ TYPING TEXT -->
 <div class="hero">
 
+    <img src="/static/logo.png" class="logo fade-in">
+
     <h1 id="typing-text"></h1>
 
-    <h1 id="description">
-    
-    You’re not alone <br>
-    we’re here to help you understand yourself
+    <p class="tagline fade-in">
+        A screening tool for understanding <span>anxiety</span> and <span>depression</span>
+    </p>
 
-    </h1>
+    <div class="subtext fade-in">
+        <p>You’re not alone</p>
+        <p>we’re here to help you understand yourself</p>
+    </div>
 
 </div>
 
 <!-- 📦 FEATURES SECTION -->
 <div class="features-section">
 
-    <!-- 📦 FEATURES -->
     <div class="features" id="features">
 
         <div class="card">
             <img src="/static/icon1.jpeg">
-            <h3>Guidance you can trust</h3>
-            <p>Find reliable mental health information.</p>
+            <h3>Understand Your Feelings</h3>
+            <p>We help you recognize signs of depression, anxiety, and low mood based on what you share.</p>
         </div>
 
         <div class="card">
             <img src="/static/icon2.jpeg">
-            <h3>Understand your feelings</h3>
-            <p>Manage emotions and build strong habits.</p>
+            <h3>Check Your<br>Well-being</h3>
+            <p>Answer a few simple questions to understand how you are feeling overall.</p>
         </div>
 
         <div class="card">
             <img src="/static/icon3.jpeg">
-            <h3>Strategies to feel better</h3>
-            <p>Improve your mental well-being daily.</p>
+            <h3>Know Your<br>Risk Level</h3>
+            <p>Get a clear idea of your current mental health level like low, moderate, or high.</p>
         </div>
 
         <div class="card">
             <img src="/static/icon4.jpeg">
-            <h3>Support you can rely on</h3>
-            <p>We're here whenever you need help.</p>
+            <h3>Get Support & Guidance</h3>
+            <p>Receive helpful tips, suggestions, and resources to feel better and stay strong.</p>
         </div>
 
     </div>
@@ -248,15 +333,26 @@ function typeEffect() {
 
 /* 🎬 SHOW CONTENT STEP BY STEP */
 function showContent() {
-    document.getElementById("description").style.opacity = "1";
+
+    const logo = document.querySelector(".logo");
+    logo.style.opacity = "1";
+    logo.style.transform = "translateY(0)";
+
+    setTimeout(() => {
+        document.querySelector(".tagline").style.opacity = "1";
+    }, 600);
+
+    setTimeout(() => {
+        document.querySelector(".subtext").style.opacity = "1";
+    }, 1200);
 
     setTimeout(() => {
         document.getElementById("features").style.opacity = "1";
-    }, 800);
+    }, 1800);
 
     setTimeout(() => {
         document.getElementById("startBtn").style.opacity = "1";
-    }, 1600);
+    }, 2400);
 }
 
 /* START */
